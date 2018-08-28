@@ -297,4 +297,24 @@ return [
             ],
         ],
     ],
+    'zf-mvc-auth' => [
+        'authorization' => [
+            'dashboard\\V1\\Rest\\Movies\\Controller' => [
+                'collection' => [
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
+                ],
+                'entity' => [
+                    'GET' => true,
+                    'POST' => false,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ],
+            ],
+        ],
+    ],
 ];
