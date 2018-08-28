@@ -7,6 +7,21 @@
 use Zend\Stdlib\ArrayUtils;
 use ZF\Apigility\Application;
 
+// $headers = apache_request_headers();
+
+// foreach ($headers as $header => $value) {
+//     echo "$header: $value <br />\n";
+// }
+if (isset(apache_request_headers()["Auth"])) $_SERVER['HTTP_AUTHORIZATION'] = apache_request_headers()["Auth"];
+if (isset(apache_request_headers()["Authorization"])) $_SERVER['HTTP_AUTHORIZATION'] = apache_request_headers()["Authorization"];
+// echo "REDIRECT_HTTP_AUTHORIZATION=>".$_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ;
+// echo "REQUEST_METHOD=>".$_SERVER['REQUEST_METHOD'] ;
+// echo "AUTHORIZATION=>".$headers['AUTHORIZATION'] ;
+// echo "HTTP_AUTHORIZATION=>".$_SERVER['HTTP_AUTHORIZATION'] ;
+// echo "Authorization=>".$_SERVER['Authorization'] ;
+// echo "Auth=>".apache_request_headers()["Auth"];
+
+
 if (isset($_SERVER['HTTP_ORIGIN'])) {
     header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
     header('Access-Control-Allow-Credentials: true');
