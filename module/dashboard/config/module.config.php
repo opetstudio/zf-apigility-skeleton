@@ -301,18 +301,18 @@ return [
         'authorization' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
                 'collection' => [
-                    'GET' => false,
-                    'POST' => false,
+                    'GET' => true,
+                    'POST' => true,
                     'PUT' => false,
                     'PATCH' => false,
                     'DELETE' => false,
                 ],
                 'entity' => [
-                    'GET' => false,
+                    'GET' => true,
                     'POST' => false,
-                    'PUT' => false,
-                    'PATCH' => false,
-                    'DELETE' => false,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
                 ],
             ],
         ],
