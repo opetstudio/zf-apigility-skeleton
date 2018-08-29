@@ -11,11 +11,21 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rest.tb-badges' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/tb_badges[/:tb_badges_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbBadges\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
         'uri' => [
             0 => 'dashboard.rest.movies',
+            1 => 'dashboard.rest.tb-badges',
         ],
     ],
     'zf-rest' => [
@@ -41,10 +51,33 @@ return [
             'collection_class' => \dashboard\V1\Rest\Movies\MoviesCollection::class,
             'service_name' => 'movies',
         ],
+        'dashboard\\V1\\Rest\\TbBadges\\Controller' => [
+            'listener' => 'dashboard\\V1\\Rest\\TbBadges\\TbBadgesResource',
+            'route_name' => 'dashboard.rest.tb-badges',
+            'route_identifier_name' => 'tb_badges_id',
+            'collection_name' => 'tb_badges',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbBadges\TbBadgesEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbBadges\TbBadgesCollection::class,
+            'service_name' => 'tb_badges',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rest\\TbBadges\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -52,9 +85,18 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'dashboard\\V1\\Rest\\TbBadges\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbBadges\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -74,6 +116,18 @@ return [
                 'route_identifier_name' => 'movies_id',
                 'is_collection' => true,
             ],
+            \dashboard\V1\Rest\TbBadges\TbBadgesEntity::class => [
+                'entity_identifier_name' => 'id',
+                'route_name' => 'dashboard.rest.tb-badges',
+                'route_identifier_name' => 'tb_badges_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbBadges\TbBadgesCollection::class => [
+                'entity_identifier_name' => 'id',
+                'route_name' => 'dashboard.rest.tb-badges',
+                'route_identifier_name' => 'tb_badges_id',
+                'is_collection' => true,
+            ],
         ],
     ],
     'zf-apigility' => [
@@ -86,11 +140,21 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\Movies\\MoviesResource\\Table',
             ],
+            'dashboard\\V1\\Rest\\TbBadges\\TbBadgesResource' => [
+                'adapter_name' => 'mysqlpdo',
+                'table_name' => 'tb_badges',
+                'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+                'controller_service_name' => 'dashboard\\V1\\Rest\\TbBadges\\Controller',
+                'entity_identifier_name' => 'id',
+            ],
         ],
     ],
     'zf-content-validation' => [
         'dashboard\\V1\\Rest\\Movies\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rest\\Movies\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbBadges\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbBadges\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -296,10 +360,98 @@ return [
                 ],
             ],
         ],
+        'dashboard\\V1\\Rest\\TbBadges\\Validator' => [
+            0 => [
+                'name' => 'badge_name',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => 'ZF\\ContentValidation\\Validator\\DbNoRecordExists',
+                        'options' => [
+                            'adapter' => 'mysqlpdo',
+                            'table' => 'tb_badges',
+                            'field' => 'badge_name',
+                        ],
+                    ],
+                    1 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'badge_number',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => 'ZF\\ContentValidation\\Validator\\DbNoRecordExists',
+                        'options' => [
+                            'adapter' => 'mysqlpdo',
+                            'table' => 'tb_badges',
+                            'field' => 'badge_number',
+                        ],
+                    ],
+                    1 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '10',
+                        ],
+                    ],
+                ],
+            ],
+            2 => [
+                'name' => 'createdon',
+                'required' => true,
+                'filters' => [],
+                'validators' => [],
+            ],
+            3 => [
+                'name' => 'modifiedon',
+                'required' => true,
+                'filters' => [],
+                'validators' => [],
+            ],
+        ],
     ],
     'zf-mvc-auth' => [
         'authorization' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
+                'collection' => [
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
+                ],
+                'entity' => [
+                    'GET' => true,
+                    'POST' => false,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ],
+            ],
+            'dashboard\\V1\\Rest\\TbBadges\\Controller' => [
                 'collection' => [
                     'GET' => true,
                     'POST' => true,
