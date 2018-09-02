@@ -14,7 +14,7 @@ return [
             'dashboard.rest.tb-badges' => [
                 'type' => 'Segment',
                 'options' => [
-                    'route' => '/tb_badges[/:tb_badges_id]',
+                    'route' => '/badges[/:tb_badges_id]',
                     'defaults' => [
                         'controller' => 'dashboard\\V1\\Rest\\TbBadges\\Controller',
                     ],
@@ -117,13 +117,13 @@ return [
                 'is_collection' => true,
             ],
             \dashboard\V1\Rest\TbBadges\TbBadgesEntity::class => [
-                'entity_identifier_name' => 'id',
+                'entity_identifier_name' => '_id',
                 'route_name' => 'dashboard.rest.tb-badges',
                 'route_identifier_name' => 'tb_badges_id',
                 'hydrator' => \Zend\Hydrator\ArraySerializable::class,
             ],
             \dashboard\V1\Rest\TbBadges\TbBadgesCollection::class => [
-                'entity_identifier_name' => 'id',
+                'entity_identifier_name' => '_id',
                 'route_name' => 'dashboard.rest.tb-badges',
                 'route_identifier_name' => 'tb_badges_id',
                 'is_collection' => true,
@@ -145,7 +145,8 @@ return [
                 'table_name' => 'tb_badges',
                 'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
                 'controller_service_name' => 'dashboard\\V1\\Rest\\TbBadges\\Controller',
-                'entity_identifier_name' => 'id',
+                'entity_identifier_name' => '_id',
+                'table_service' => 'dashboard\\V1\\Rest\\TbBadges\\TbBadgesResource\\Table',
             ],
         ],
     ],
@@ -420,16 +421,11 @@ return [
                 ],
             ],
             2 => [
-                'name' => 'createdon',
-                'required' => true,
-                'filters' => [],
+                'required' => false,
                 'validators' => [],
-            ],
-            3 => [
-                'name' => 'modifiedon',
-                'required' => true,
                 'filters' => [],
-                'validators' => [],
+                'name' => 'status',
+                'description' => 'record status: draft, publish, delete',
             ],
         ],
     ],
