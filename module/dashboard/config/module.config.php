@@ -20,12 +20,23 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rpc.badges-batch-remove' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/badgesBatchRemove',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller',
+                        'action' => 'badgesBatchRemove',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
         'uri' => [
             0 => 'dashboard.rest.movies',
             1 => 'dashboard.rest.tb-badges',
+            2 => 'dashboard.rpc.badges-batch-remove',
         ],
     ],
     'zf-rest' => [
@@ -78,6 +89,7 @@ return [
         'controllers' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => 'HalJson',
             'dashboard\\V1\\Rest\\TbBadges\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -90,6 +102,11 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -97,6 +114,10 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rest\\TbBadges\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -156,6 +177,9 @@ return [
         ],
         'dashboard\\V1\\Rest\\TbBadges\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rest\\TbBadges\\Validator',
+        ],
+        'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -428,7 +452,20 @@ return [
                 'description' => 'record status: draft, publish, delete',
             ],
         ],
+        'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Validator' => [
+            0 => [
+                'required' => true,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'ack',
+            ],
+        ],
     ],
+    // 'service_manager' => [
+    //     'abstract_factories' => [
+    //         \Zend\Db\Adapter\AdapterAbstractServiceFactory::class,
+    //     ],
+    // ],
     'zf-mvc-auth' => [
         'authorization' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -463,6 +500,20 @@ return [
                     'DELETE' => true,
                 ],
             ],
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
+            'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => \dashboard\V1\Rpc\BadgesBatchRemove\BadgesBatchRemoveControllerFactory::class,
+        ],
+    ],
+    'zf-rpc' => [
+        'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => [
+            'service_name' => 'badgesBatchRemove',
+            'http_methods' => [
+                0 => 'GET',
+            ],
+            'route_name' => 'dashboard.rpc.badges-batch-remove',
         ],
     ],
 ];
