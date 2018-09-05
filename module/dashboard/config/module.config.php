@@ -40,6 +40,16 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rpc.csvtojson' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/csv-to-json',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\Csvtojson\\Controller',
+                        'action' => 'csvtojson',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -48,6 +58,7 @@ return [
             1 => 'dashboard.rest.tb-badges',
             2 => 'dashboard.rpc.badges-batch-remove',
             3 => 'dashboard.rpc.badges-update-batch',
+            4 => 'dashboard.rpc.csvtojson',
         ],
     ],
     'zf-rest' => [
@@ -102,6 +113,7 @@ return [
             'dashboard\\V1\\Rest\\TbBadges\\Controller' => 'HalJson',
             'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => 'Json',
             'dashboard\\V1\\Rpc\\BadgesUpdateBatch\\Controller' => 'Json',
+            'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -124,6 +136,11 @@ return [
                 1 => 'application/json',
                 2 => 'application/*+json',
             ],
+            'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -139,6 +156,10 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rpc\\BadgesUpdateBatch\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -533,6 +554,7 @@ return [
         'factories' => [
             'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => \dashboard\V1\Rpc\BadgesBatchRemove\BadgesBatchRemoveControllerFactory::class,
             'dashboard\\V1\\Rpc\\BadgesUpdateBatch\\Controller' => \dashboard\V1\Rpc\BadgesUpdateBatch\BadgesUpdateBatchControllerFactory::class,
+            'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => \dashboard\V1\Rpc\Csvtojson\CsvtojsonControllerFactory::class,
         ],
     ],
     'zf-rpc' => [
@@ -550,6 +572,13 @@ return [
                 0 => 'POST',
             ],
             'route_name' => 'dashboard.rpc.badges-update-batch',
+        ],
+        'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => [
+            'service_name' => 'csvtojson',
+            'http_methods' => [
+                0 => 'GET',
+            ],
+            'route_name' => 'dashboard.rpc.csvtojson',
         ],
     ],
 ];

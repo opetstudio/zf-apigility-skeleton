@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "54b35161cef0772a2890fe5f620c2418",
+    "content-hash": "7b552522c620fe07d4c4eee0c5f4d83a",
     "packages": [
         {
             "name": "bshaffer/oauth2-server-php",
@@ -287,6 +287,56 @@
                 "rest"
             ],
             "time": "2016-10-28T16:06:13+00:00"
+        },
+        {
+            "name": "radnan/rdn-csv",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/radnan/rdn-csv.git",
+                "reference": "1c21ddbcc777bba2a6f584fb0ce41c6963fd6494"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/radnan/rdn-csv/zipball/1c21ddbcc777bba2a6f584fb0ce41c6963fd6494",
+                "reference": "1c21ddbcc777bba2a6f584fb0ce41c6963fd6494",
+                "shasum": ""
+            },
+            "require": {
+                "zendframework/zend-http": "^2.6",
+                "zendframework/zend-mvc": "^2.7.9 || ^3.1"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "*",
+                "phpunit/phpunit": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "RdnCsv\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "radnan",
+                    "email": "rafiadnan47@gmail.com"
+                }
+            ],
+            "description": "Zend Framework 2/3 module to export and import CSV files",
+            "keywords": [
+                "ZendFramework",
+                "csv",
+                "export",
+                "import",
+                "zend",
+                "zf2",
+                "zf3"
+            ],
+            "time": "2018-04-29T15:52:19+00:00"
         },
         {
             "name": "zendframework/zend-authentication",
