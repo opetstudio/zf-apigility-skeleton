@@ -64,6 +64,7 @@ class BadgesUpdateBatchController extends AbstractActionController
                 // return $row;
             }
         }
+        return false;
 
         // return $body;
     }

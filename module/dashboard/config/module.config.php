@@ -50,6 +50,25 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rest.tb-conference' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/conferences[/:tb_conference_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbConference\\Controller',
+                    ],
+                ],
+            ],
+            'dashboard.rpc.conference-update-batch' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/conferences-update-batch',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller',
+                        'action' => 'conferenceUpdateBatch',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -59,6 +78,8 @@ return [
             2 => 'dashboard.rpc.badges-batch-remove',
             3 => 'dashboard.rpc.badges-update-batch',
             4 => 'dashboard.rpc.csvtojson',
+            5 => 'dashboard.rest.tb-conference',
+            7 => 'dashboard.rpc.conference-update-batch',
         ],
     ],
     'zf-rest' => [
@@ -106,6 +127,28 @@ return [
             'collection_class' => \dashboard\V1\Rest\TbBadges\TbBadgesCollection::class,
             'service_name' => 'tb_badges',
         ],
+        'dashboard\\V1\\Rest\\TbConference\\Controller' => [
+            'listener' => 'dashboard\\V1\\Rest\\TbConference\\TbConferenceResource',
+            'route_name' => 'dashboard.rest.tb-conference',
+            'route_identifier_name' => 'tb_conference_id',
+            'collection_name' => 'tb_conference',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbConference\TbConferenceEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbConference\TbConferenceCollection::class,
+            'service_name' => 'tb_conference',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
@@ -114,6 +157,8 @@ return [
             'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => 'Json',
             'dashboard\\V1\\Rpc\\BadgesUpdateBatch\\Controller' => 'Json',
             'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => 'Json',
+            'dashboard\\V1\\Rest\\TbConference\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -141,6 +186,16 @@ return [
                 1 => 'application/json',
                 2 => 'application/*+json',
             ],
+            'dashboard\\V1\\Rest\\TbConference\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -160,6 +215,14 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbConference\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -191,6 +254,18 @@ return [
                 'route_identifier_name' => 'tb_badges_id',
                 'is_collection' => true,
             ],
+            \dashboard\V1\Rest\TbConference\TbConferenceEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-conference',
+                'route_identifier_name' => 'tb_conference_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbConference\TbConferenceCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-conference',
+                'route_identifier_name' => 'tb_conference_id',
+                'is_collection' => true,
+            ],
         ],
     ],
     'zf-apigility' => [
@@ -211,6 +286,14 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\TbBadges\\TbBadgesResource\\Table',
             ],
+            'dashboard\\V1\\Rest\\TbConference\\TbConferenceResource' => [
+                'adapter_name' => 'mysqlpdo',
+                'table_name' => 'tb_conference',
+                'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+                'controller_service_name' => 'dashboard\\V1\\Rest\\TbConference\\Controller',
+                'entity_identifier_name' => '_id',
+                'table_service' => 'dashboard\\V1\\Rest\\TbConference\\TbConferenceResource\\Table',
+            ],
         ],
     ],
     'zf-content-validation' => [
@@ -222,6 +305,9 @@ return [
         ],
         'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbConference\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbConference\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -502,6 +588,64 @@ return [
                 'name' => 'ack',
             ],
         ],
+        'dashboard\\V1\\Rest\\TbConference\\Validator' => [
+            0 => [
+                'name' => 'conference_code',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => 'ZF\\ContentValidation\\Validator\\DbNoRecordExists',
+                        'options' => [
+                            'adapter' => 'mysqlpdo',
+                            'table' => 'tb_conference',
+                            'field' => 'conference_code',
+                        ],
+                    ],
+                    1 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '50',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'conference_name',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            2 => [
+                'required' => true,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'status',
+            ],
+        ],
     ],
     'zf-mvc-auth' => [
         'authorization' => [
@@ -548,6 +692,17 @@ return [
                     ],
                 ],
             ],
+            'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => [
+                'actions' => [
+                    'ConferenceUpdateBatch' => [
+                        'GET' => false,
+                        'POST' => true,
+                        'PUT' => false,
+                        'PATCH' => false,
+                        'DELETE' => false,
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
@@ -555,6 +710,7 @@ return [
             'dashboard\\V1\\Rpc\\BadgesBatchRemove\\Controller' => \dashboard\V1\Rpc\BadgesBatchRemove\BadgesBatchRemoveControllerFactory::class,
             'dashboard\\V1\\Rpc\\BadgesUpdateBatch\\Controller' => \dashboard\V1\Rpc\BadgesUpdateBatch\BadgesUpdateBatchControllerFactory::class,
             'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => \dashboard\V1\Rpc\Csvtojson\CsvtojsonControllerFactory::class,
+            'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => \dashboard\V1\Rpc\ConferenceUpdateBatch\ConferenceUpdateBatchControllerFactory::class,
         ],
     ],
     'zf-rpc' => [
@@ -579,6 +735,13 @@ return [
                 0 => 'GET',
             ],
             'route_name' => 'dashboard.rpc.csvtojson',
+        ],
+        'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => [
+            'service_name' => 'conferenceUpdateBatch',
+            'http_methods' => [
+                0 => 'POST',
+            ],
+            'route_name' => 'dashboard.rpc.conference-update-batch',
         ],
     ],
 ];
