@@ -69,6 +69,25 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rest.tb-participant' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/participants[/:tb_participant_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbParticipant\\Controller',
+                    ],
+                ],
+            ],
+            'dashboard.rpc.participant-update-batch' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/participants-update-batch',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller',
+                        'action' => 'participantUpdateBatch',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -80,6 +99,8 @@ return [
             4 => 'dashboard.rpc.csvtojson',
             5 => 'dashboard.rest.tb-conference',
             7 => 'dashboard.rpc.conference-update-batch',
+            8 => 'dashboard.rest.tb-participant',
+            9 => 'dashboard.rpc.participant-update-batch',
         ],
     ],
     'zf-rest' => [
@@ -149,6 +170,28 @@ return [
             'collection_class' => \dashboard\V1\Rest\TbConference\TbConferenceCollection::class,
             'service_name' => 'tb_conference',
         ],
+        'dashboard\\V1\\Rest\\TbParticipant\\Controller' => [
+            'listener' => 'dashboard\\V1\\Rest\\TbParticipant\\TbParticipantResource',
+            'route_name' => 'dashboard.rest.tb-participant',
+            'route_identifier_name' => 'tb_participant_id',
+            'collection_name' => 'tb_participant',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbParticipant\TbParticipantEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbParticipant\TbParticipantCollection::class,
+            'service_name' => 'tb_participant',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
@@ -159,6 +202,8 @@ return [
             'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => 'Json',
             'dashboard\\V1\\Rest\\TbConference\\Controller' => 'HalJson',
             'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => 'Json',
+            'dashboard\\V1\\Rest\\TbParticipant\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -196,6 +241,16 @@ return [
                 1 => 'application/json',
                 2 => 'application/*+json',
             ],
+            'dashboard\\V1\\Rest\\TbParticipant\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -223,6 +278,14 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbParticipant\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -266,6 +329,18 @@ return [
                 'route_identifier_name' => 'tb_conference_id',
                 'is_collection' => true,
             ],
+            \dashboard\V1\Rest\TbParticipant\TbParticipantEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-participant',
+                'route_identifier_name' => 'tb_participant_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbParticipant\TbParticipantCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-participant',
+                'route_identifier_name' => 'tb_participant_id',
+                'is_collection' => true,
+            ],
         ],
     ],
     'zf-apigility' => [
@@ -294,6 +369,14 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\TbConference\\TbConferenceResource\\Table',
             ],
+            'dashboard\\V1\\Rest\\TbParticipant\\TbParticipantResource' => [
+                'adapter_name' => 'mysqlpdo',
+                'table_name' => 'tb_participant',
+                'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+                'controller_service_name' => 'dashboard\\V1\\Rest\\TbParticipant\\Controller',
+                'entity_identifier_name' => '_id',
+                'table_service' => 'dashboard\\V1\\Rest\\TbParticipant\\TbParticipantResource\\Table',
+            ],
         ],
     ],
     'zf-content-validation' => [
@@ -308,6 +391,9 @@ return [
         ],
         'dashboard\\V1\\Rest\\TbConference\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rest\\TbConference\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbParticipant\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbParticipant\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -646,6 +732,182 @@ return [
                 'name' => 'status',
             ],
         ],
+        'dashboard\\V1\\Rest\\TbParticipant\\Validator' => [
+            0 => [
+                'name' => 'address',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'church',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            2 => [
+                'name' => 'conference',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '20',
+                        ],
+                    ],
+                ],
+            ],
+            3 => [
+                'name' => 'email',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '50',
+                        ],
+                    ],
+                ],
+            ],
+            4 => [
+                'name' => 'first_name',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '50',
+                        ],
+                    ],
+                ],
+            ],
+            5 => [
+                'name' => 'last_name',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '50',
+                        ],
+                    ],
+                ],
+            ],
+            6 => [
+                'name' => 'phone_number',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '20',
+                        ],
+                    ],
+                ],
+            ],
+            7 => [
+                'name' => 'profile_picture',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '150',
+                        ],
+                    ],
+                ],
+            ],
+            8 => [
+                'name' => 'status',
+                'required' => true,
+                'filters' => [],
+                'validators' => [],
+            ],
+        ],
     ],
     'zf-mvc-auth' => [
         'authorization' => [
@@ -711,6 +973,7 @@ return [
             'dashboard\\V1\\Rpc\\BadgesUpdateBatch\\Controller' => \dashboard\V1\Rpc\BadgesUpdateBatch\BadgesUpdateBatchControllerFactory::class,
             'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => \dashboard\V1\Rpc\Csvtojson\CsvtojsonControllerFactory::class,
             'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => \dashboard\V1\Rpc\ConferenceUpdateBatch\ConferenceUpdateBatchControllerFactory::class,
+            'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => \dashboard\V1\Rpc\ParticipantUpdateBatch\ParticipantUpdateBatchControllerFactory::class,
         ],
     ],
     'zf-rpc' => [
@@ -742,6 +1005,13 @@ return [
                 0 => 'POST',
             ],
             'route_name' => 'dashboard.rpc.conference-update-batch',
+        ],
+        'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => [
+            'service_name' => 'participantUpdateBatch',
+            'http_methods' => [
+                0 => 'POST',
+            ],
+            'route_name' => 'dashboard.rpc.participant-update-batch',
         ],
     ],
 ];
