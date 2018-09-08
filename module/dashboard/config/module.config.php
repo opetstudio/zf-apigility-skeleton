@@ -88,6 +88,15 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rest.tb-users' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/users[/:tb_users_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbUsers\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -101,6 +110,7 @@ return [
             7 => 'dashboard.rpc.conference-update-batch',
             8 => 'dashboard.rest.tb-participant',
             9 => 'dashboard.rpc.participant-update-batch',
+            10 => 'dashboard.rest.tb-users',
         ],
     ],
     'zf-rest' => [
@@ -192,6 +202,28 @@ return [
             'collection_class' => \dashboard\V1\Rest\TbParticipant\TbParticipantCollection::class,
             'service_name' => 'tb_participant',
         ],
+        'dashboard\\V1\\Rest\\TbUsers\\Controller' => [
+            'listener' => 'dashboard\\V1\\Rest\\TbUsers\\TbUsersResource',
+            'route_name' => 'dashboard.rest.tb-users',
+            'route_identifier_name' => 'tb_users_id',
+            'collection_name' => 'tb_users',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbUsers\TbUsersEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbUsers\TbUsersCollection::class,
+            'service_name' => 'tb_users',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
@@ -204,6 +236,7 @@ return [
             'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => 'Json',
             'dashboard\\V1\\Rest\\TbParticipant\\Controller' => 'HalJson',
             'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => 'Json',
+            'dashboard\\V1\\Rest\\TbUsers\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -251,6 +284,11 @@ return [
                 1 => 'application/json',
                 2 => 'application/*+json',
             ],
+            'dashboard\\V1\\Rest\\TbUsers\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -286,6 +324,10 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbUsers\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -341,6 +383,18 @@ return [
                 'route_identifier_name' => 'tb_participant_id',
                 'is_collection' => true,
             ],
+            \dashboard\V1\Rest\TbUsers\TbUsersEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-users',
+                'route_identifier_name' => 'tb_users_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbUsers\TbUsersCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-users',
+                'route_identifier_name' => 'tb_users_id',
+                'is_collection' => true,
+            ],
         ],
     ],
     'zf-apigility' => [
@@ -377,6 +431,14 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\TbParticipant\\TbParticipantResource\\Table',
             ],
+            // 'dashboard\\V1\\Rest\\TbUsers\\TbUsersResource' => [
+            //     'adapter_name' => 'mysqlpdo',
+            //     'table_name' => 'tb_users',
+            //     'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+            //     'controller_service_name' => 'dashboard\\V1\\Rest\\TbUsers\\Controller',
+            //     'entity_identifier_name' => '_id',
+            //     'table_service' => 'dashboard\\V1\\Rest\\TbUsers\\TbUsersResource\\Table',
+            // ],
         ],
     ],
     'zf-content-validation' => [
@@ -394,6 +456,9 @@ return [
         ],
         'dashboard\\V1\\Rest\\TbParticipant\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rest\\TbParticipant\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbUsers\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbUsers\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -908,6 +973,185 @@ return [
                 'validators' => [],
             ],
         ],
+        'dashboard\\V1\\Rest\\TbUsers\\Validator' => [
+            0 => [
+                'name' => 'username',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => 'ZF\\ContentValidation\\Validator\\DbNoRecordExists',
+                        'options' => [
+                            'adapter' => 'mysqlpdo',
+                            'table' => 'tb_users',
+                            'field' => 'username',
+                        ],
+                    ],
+                    1 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'email',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => 'ZF\\ContentValidation\\Validator\\DbNoRecordExists',
+                        'options' => [
+                            'adapter' => 'mysqlpdo',
+                            'table' => 'tb_users',
+                            'field' => 'email',
+                        ],
+                    ],
+                    1 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            2 => [
+                'name' => 'password',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '150',
+                        ],
+                    ],
+                ],
+            ],
+            3 => [
+                'name' => 'client_id',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => 'ZF\\ContentValidation\\Validator\\DbNoRecordExists',
+                        'options' => [
+                            'adapter' => 'mysqlpdo',
+                            'table' => 'tb_users',
+                            'field' => 'client_id',
+                        ],
+                    ],
+                    1 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '50',
+                        ],
+                    ],
+                ],
+            ],
+            4 => [
+                'name' => 'scope',
+                'required' => true,
+                'filters' => [],
+                'validators' => [],
+            ],
+            5 => [
+                'name' => 'first_name',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            6 => [
+                'name' => 'last_name',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            7 => [
+                'name' => 'phone_number',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '15',
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ],
     'zf-mvc-auth' => [
         'authorization' => [
@@ -965,6 +1209,12 @@ return [
                     ],
                 ],
             ],
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            dashboard\V1\Rest\TbUsers\TbUsersResource::class => dashboard\V1\Rest\TbUsers\TbUsersResourceFactory::class,
+            dashboard\V1\Rest\TbUsers\TbUsersTableGateway::class => dashboard\V1\Rest\TbUsers\TbUsersTableGatewayFactory::class,
         ],
     ],
     'controllers' => [
