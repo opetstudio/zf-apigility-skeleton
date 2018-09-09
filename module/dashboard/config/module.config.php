@@ -107,6 +107,15 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rest.tb-classes' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/classes[/:tb_classes_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbClasses\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -122,6 +131,7 @@ return [
             9 => 'dashboard.rpc.participant-update-batch',
             10 => 'dashboard.rest.tb-users',
             11 => 'dashboard.rpc.get-user-profile',
+            12 => 'dashboard.rest.tb-classes',
         ],
     ],
     'zf-rest' => [
@@ -235,6 +245,28 @@ return [
             'collection_class' => \dashboard\V1\Rest\TbUsers\TbUsersCollection::class,
             'service_name' => 'tb_users',
         ],
+        'dashboard\\V1\\Rest\\TbClasses\\Controller' => [
+            'listener' => 'dashboard\\V1\\Rest\\TbClasses\\TbClassesResource',
+            'route_name' => 'dashboard.rest.tb-classes',
+            'route_identifier_name' => 'tb_classes_id',
+            'collection_name' => 'tb_classes',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbClasses\TbClassesEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbClasses\TbClassesCollection::class,
+            'service_name' => 'tb_classes',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
@@ -249,6 +281,7 @@ return [
             'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => 'Json',
             'dashboard\\V1\\Rest\\TbUsers\\Controller' => 'HalJson',
             'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => 'Json',
+            'dashboard\\V1\\Rest\\TbClasses\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -306,6 +339,11 @@ return [
                 1 => 'application/json',
                 2 => 'application/*+json',
             ],
+            'dashboard\\V1\\Rest\\TbClasses\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -349,6 +387,10 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbClasses\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -416,6 +458,18 @@ return [
                 'route_identifier_name' => 'tb_users_id',
                 'is_collection' => true,
             ],
+            \dashboard\V1\Rest\TbClasses\TbClassesEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-classes',
+                'route_identifier_name' => 'tb_classes_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbClasses\TbClassesCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-classes',
+                'route_identifier_name' => 'tb_classes_id',
+                'is_collection' => true,
+            ],
         ],
     ],
     'zf-apigility' => [
@@ -452,6 +506,14 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\TbParticipant\\TbParticipantResource\\Table',
             ],
+            'dashboard\\V1\\Rest\\TbClasses\\TbClassesResource' => [
+                'adapter_name' => 'mysqlpdo',
+                'table_name' => 'tb_classes',
+                'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+                'controller_service_name' => 'dashboard\\V1\\Rest\\TbClasses\\Controller',
+                'entity_identifier_name' => '_id',
+                'table_service' => 'dashboard\\V1\\Rest\\TbClasses\\TbClassesResource\\Table',
+            ],
         ],
     ],
     'zf-content-validation' => [
@@ -472,6 +534,9 @@ return [
         ],
         'dashboard\\V1\\Rest\\TbUsers\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rest\\TbUsers\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbClasses\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbClasses\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -1140,6 +1205,111 @@ return [
                 'validators' => [],
                 'filters' => [],
                 'name' => 'status',
+            ],
+        ],
+        'dashboard\\V1\\Rest\\TbClasses\\Validator' => [
+            0 => [
+                'name' => 'badge',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '15',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'Venue',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '200',
+                        ],
+                    ],
+                ],
+            ],
+            2 => [
+                'name' => 'starting_date',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
+            ],
+            3 => [
+                'name' => 'description',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '200',
+                        ],
+                    ],
+                ],
+            ],
+            4 => [
+                'name' => 'status',
+                'required' => true,
+                'filters' => [],
+                'validators' => [],
+            ],
+            5 => [
+                'name' => 'fasilitator',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
             ],
         ],
     ],
