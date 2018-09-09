@@ -9,7 +9,7 @@ class TbUsersResourceFactory
     {
         return new TbUsersResource(
             $container->get(TbUsersTableGateway::class),
-            'id',
+            '_id',
             TbUsersCollection::class
         );
     }

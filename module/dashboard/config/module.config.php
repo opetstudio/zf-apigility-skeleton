@@ -97,6 +97,16 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rpc.get-user-profile' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/getUserProfile/:access_token_or_username',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\GetUserProfile\\Controller',
+                        'action' => 'getUserProfile',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -111,6 +121,7 @@ return [
             8 => 'dashboard.rest.tb-participant',
             9 => 'dashboard.rpc.participant-update-batch',
             10 => 'dashboard.rest.tb-users',
+            11 => 'dashboard.rpc.get-user-profile',
         ],
     ],
     'zf-rest' => [
@@ -203,7 +214,7 @@ return [
             'service_name' => 'tb_participant',
         ],
         'dashboard\\V1\\Rest\\TbUsers\\Controller' => [
-            'listener' => 'dashboard\\V1\\Rest\\TbUsers\\TbUsersResource',
+            'listener' => \dashboard\V1\Rest\TbUsers\TbUsersResource::class,
             'route_name' => 'dashboard.rest.tb-users',
             'route_identifier_name' => 'tb_users_id',
             'collection_name' => 'tb_users',
@@ -237,6 +248,7 @@ return [
             'dashboard\\V1\\Rest\\TbParticipant\\Controller' => 'HalJson',
             'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => 'Json',
             'dashboard\\V1\\Rest\\TbUsers\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -289,6 +301,11 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -328,6 +345,10 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rest\\TbUsers\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -431,14 +452,6 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\TbParticipant\\TbParticipantResource\\Table',
             ],
-            // 'dashboard\\V1\\Rest\\TbUsers\\TbUsersResource' => [
-            //     'adapter_name' => 'mysqlpdo',
-            //     'table_name' => 'tb_users',
-            //     'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
-            //     'controller_service_name' => 'dashboard\\V1\\Rest\\TbUsers\\Controller',
-            //     'entity_identifier_name' => '_id',
-            //     'table_service' => 'dashboard\\V1\\Rest\\TbUsers\\TbUsersResource\\Table',
-            // ],
         ],
     ],
     'zf-content-validation' => [
@@ -1054,41 +1067,12 @@ return [
                 ],
             ],
             3 => [
-                'name' => 'client_id',
-                'required' => true,
-                'filters' => [
-                    0 => [
-                        'name' => \Zend\Filter\StringTrim::class,
-                    ],
-                    1 => [
-                        'name' => \Zend\Filter\StripTags::class,
-                    ],
-                ],
-                'validators' => [
-                    0 => [
-                        'name' => 'ZF\\ContentValidation\\Validator\\DbNoRecordExists',
-                        'options' => [
-                            'adapter' => 'mysqlpdo',
-                            'table' => 'tb_users',
-                            'field' => 'client_id',
-                        ],
-                    ],
-                    1 => [
-                        'name' => \Zend\Validator\StringLength::class,
-                        'options' => [
-                            'min' => 1,
-                            'max' => '50',
-                        ],
-                    ],
-                ],
-            ],
-            4 => [
                 'name' => 'scope',
                 'required' => true,
                 'filters' => [],
                 'validators' => [],
             ],
-            5 => [
+            4 => [
                 'name' => 'first_name',
                 'required' => true,
                 'filters' => [
@@ -1109,7 +1093,7 @@ return [
                     ],
                 ],
             ],
-            6 => [
+            5 => [
                 'name' => 'last_name',
                 'required' => false,
                 'filters' => [
@@ -1130,7 +1114,7 @@ return [
                     ],
                 ],
             ],
-            7 => [
+            6 => [
                 'name' => 'phone_number',
                 'required' => false,
                 'filters' => [
@@ -1150,6 +1134,12 @@ return [
                         ],
                     ],
                 ],
+            ],
+            7 => [
+                'required' => true,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'status',
             ],
         ],
     ],
@@ -1209,12 +1199,23 @@ return [
                     ],
                 ],
             ],
+            'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => [
+                'actions' => [
+                    'GetUserProfile' => [
+                        'GET' => true,
+                        'POST' => false,
+                        'PUT' => false,
+                        'PATCH' => false,
+                        'DELETE' => false,
+                    ],
+                ],
+            ],
         ],
     ],
     'service_manager' => [
         'factories' => [
-            dashboard\V1\Rest\TbUsers\TbUsersResource::class => dashboard\V1\Rest\TbUsers\TbUsersResourceFactory::class,
-            dashboard\V1\Rest\TbUsers\TbUsersTableGateway::class => dashboard\V1\Rest\TbUsers\TbUsersTableGatewayFactory::class,
+            \dashboard\V1\Rest\TbUsers\TbUsersResource::class => \dashboard\V1\Rest\TbUsers\TbUsersResourceFactory::class,
+            \dashboard\V1\Rest\TbUsers\TbUsersTableGateway::class => \dashboard\V1\Rest\TbUsers\TbUsersTableGatewayFactory::class,
         ],
     ],
     'controllers' => [
@@ -1224,6 +1225,7 @@ return [
             'dashboard\\V1\\Rpc\\Csvtojson\\Controller' => \dashboard\V1\Rpc\Csvtojson\CsvtojsonControllerFactory::class,
             'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => \dashboard\V1\Rpc\ConferenceUpdateBatch\ConferenceUpdateBatchControllerFactory::class,
             'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => \dashboard\V1\Rpc\ParticipantUpdateBatch\ParticipantUpdateBatchControllerFactory::class,
+            'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => \dashboard\V1\Rpc\GetUserProfile\GetUserProfileControllerFactory::class,
         ],
     ],
     'zf-rpc' => [
@@ -1262,6 +1264,13 @@ return [
                 0 => 'POST',
             ],
             'route_name' => 'dashboard.rpc.participant-update-batch',
+        ],
+        'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => [
+            'service_name' => 'getUserProfile',
+            'http_methods' => [
+                0 => 'GET',
+            ],
+            'route_name' => 'dashboard.rpc.get-user-profile',
         ],
     ],
 ];
