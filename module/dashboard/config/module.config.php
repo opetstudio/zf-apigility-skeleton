@@ -116,6 +116,26 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rpc.logout' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/logout',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\Logout\\Controller',
+                        'action' => 'logout',
+                    ],
+                ],
+            ],
+            'dashboard.rpc.get-login-status' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/get-login-status',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller',
+                        'action' => 'getLoginStatus',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -132,6 +152,9 @@ return [
             10 => 'dashboard.rest.tb-users',
             11 => 'dashboard.rpc.get-user-profile',
             12 => 'dashboard.rest.tb-classes',
+            13 => 'dashboard.rpc.logout',
+            14 => 'dashboard.rpc.get-login-status',
+            15 => 'dashboard.rpc.get-login-status',
         ],
     ],
     'zf-rest' => [
@@ -282,6 +305,8 @@ return [
             'dashboard\\V1\\Rest\\TbUsers\\Controller' => 'HalJson',
             'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => 'Json',
             'dashboard\\V1\\Rest\\TbClasses\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rpc\\Logout\\Controller' => 'Json',
+            'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -344,6 +369,16 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'dashboard\\V1\\Rpc\\Logout\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
+            'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -391,6 +426,14 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rest\\TbClasses\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\Logout\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -506,14 +549,14 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\TbParticipant\\TbParticipantResource\\Table',
             ],
-            'dashboard\\V1\\Rest\\TbClasses\\TbClassesResource' => [
-                'adapter_name' => 'mysqlpdo',
-                'table_name' => 'tb_classes',
-                'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
-                'controller_service_name' => 'dashboard\\V1\\Rest\\TbClasses\\Controller',
-                'entity_identifier_name' => '_id',
-                'table_service' => 'dashboard\\V1\\Rest\\TbClasses\\TbClassesResource\\Table',
-            ],
+            // 'dashboard\\V1\\Rest\\TbClasses\\TbClassesResource' => [
+            //     'adapter_name' => 'mysqlpdo',
+            //     'table_name' => 'tb_classes',
+            //     'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+            //     'controller_service_name' => 'dashboard\\V1\\Rest\\TbClasses\\Controller',
+            //     'entity_identifier_name' => '_id',
+            //     'table_service' => 'dashboard\\V1\\Rest\\TbClasses\\TbClassesResource\\Table',
+            // ],
         ],
     ],
     'zf-content-validation' => [
@@ -1230,27 +1273,6 @@ return [
                 ],
             ],
             1 => [
-                'name' => 'Venue',
-                'required' => true,
-                'filters' => [
-                    0 => [
-                        'name' => \Zend\Filter\StringTrim::class,
-                    ],
-                    1 => [
-                        'name' => \Zend\Filter\StripTags::class,
-                    ],
-                ],
-                'validators' => [
-                    0 => [
-                        'name' => \Zend\Validator\StringLength::class,
-                        'options' => [
-                            'min' => 1,
-                            'max' => '200',
-                        ],
-                    ],
-                ],
-            ],
-            2 => [
                 'name' => 'starting_date',
                 'required' => false,
                 'filters' => [
@@ -1261,9 +1283,17 @@ return [
                         'name' => \Zend\Filter\Digits::class,
                     ],
                 ],
-                'validators' => [],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'max' => '15',
+                            'min' => '1',
+                        ],
+                    ],
+                ],
             ],
-            3 => [
+            2 => [
                 'name' => 'description',
                 'required' => true,
                 'filters' => [
@@ -1284,32 +1314,34 @@ return [
                     ],
                 ],
             ],
-            4 => [
+            3 => [
                 'name' => 'status',
                 'required' => true,
                 'filters' => [],
                 'validators' => [],
             ],
-            5 => [
-                'name' => 'fasilitator',
+            4 => [
                 'required' => true,
-                'filters' => [
-                    0 => [
-                        'name' => \Zend\Filter\StringTrim::class,
-                    ],
-                    1 => [
-                        'name' => \Zend\Filter\StripTags::class,
-                    ],
-                ],
                 'validators' => [
                     0 => [
                         'name' => \Zend\Validator\StringLength::class,
                         'options' => [
-                            'min' => 1,
-                            'max' => '100',
+                            'max' => '15',
+                            'min' => '1',
                         ],
                     ],
                 ],
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                        'options' => [],
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                        'options' => [],
+                    ],
+                ],
+                'name' => 'venue',
             ],
         ],
     ],
@@ -1380,12 +1412,25 @@ return [
                     ],
                 ],
             ],
+            'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller' => [
+                'actions' => [
+                    'GetLoginStatus' => [
+                        'GET' => true,
+                        'POST' => false,
+                        'PUT' => false,
+                        'PATCH' => false,
+                        'DELETE' => false,
+                    ],
+                ],
+            ],
         ],
     ],
     'service_manager' => [
         'factories' => [
             \dashboard\V1\Rest\TbUsers\TbUsersResource::class => \dashboard\V1\Rest\TbUsers\TbUsersResourceFactory::class,
             \dashboard\V1\Rest\TbUsers\TbUsersTableGateway::class => \dashboard\V1\Rest\TbUsers\TbUsersTableGatewayFactory::class,
+            \dashboard\V1\Rest\TbClasses\TbClassesResource::class => \dashboard\V1\Rest\TbClasses\TbClassesResourceFactory::class,
+            \dashboard\V1\Rest\TbClasses\TbClassesTableGateway::class => \dashboard\V1\Rest\TbClasses\TbClassesTableGatewayFactory::class,
         ],
     ],
     'controllers' => [
@@ -1396,6 +1441,8 @@ return [
             'dashboard\\V1\\Rpc\\ConferenceUpdateBatch\\Controller' => \dashboard\V1\Rpc\ConferenceUpdateBatch\ConferenceUpdateBatchControllerFactory::class,
             'dashboard\\V1\\Rpc\\ParticipantUpdateBatch\\Controller' => \dashboard\V1\Rpc\ParticipantUpdateBatch\ParticipantUpdateBatchControllerFactory::class,
             'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => \dashboard\V1\Rpc\GetUserProfile\GetUserProfileControllerFactory::class,
+            'dashboard\\V1\\Rpc\\Logout\\Controller' => \dashboard\V1\Rpc\Logout\LogoutControllerFactory::class,
+            'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller' => \dashboard\V1\Rpc\GetLoginStatus\GetLoginStatusControllerFactory::class,
         ],
     ],
     'zf-rpc' => [
@@ -1441,6 +1488,20 @@ return [
                 0 => 'GET',
             ],
             'route_name' => 'dashboard.rpc.get-user-profile',
+        ],
+        'dashboard\\V1\\Rpc\\Logout\\Controller' => [
+            'service_name' => 'logout',
+            'http_methods' => [
+                0 => 'GET',
+            ],
+            'route_name' => 'dashboard.rpc.logout',
+        ],
+        'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller' => [
+            'service_name' => 'getLoginStatus',
+            'http_methods' => [
+                0 => 'GET',
+            ],
+            'route_name' => 'dashboard.rpc.get-login-status',
         ],
     ],
 ];
