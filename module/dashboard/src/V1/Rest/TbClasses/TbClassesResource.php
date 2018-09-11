@@ -13,7 +13,8 @@ class TbClassesResource extends DbConnectedResource
         if(!$identityArray) throw new DomainException('Unauthorized', 401);
         $client_id = $identityArray['client_id'];
         $username = $identityArray['user_id'];
-
+        // $resultSet = $this->table->fetchOneUserByUsername($username);
+        
         $data->fasilitator = $identityArray['user_id'];
         $data->createdby = $identityArray['user_id'];
         $data->modifiedby = $identityArray['user_id'];

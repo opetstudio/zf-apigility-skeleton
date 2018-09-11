@@ -31,4 +31,11 @@ class TbClassesTableGateway extends TableGateway
         // $adapter = $this->getAdapter();
         // return $this->fetchOne($id);
     }
+    public function fetchOneUserByUsername($username) {
+        $adapter = $this->getAdapter();
+        $tb_users = new TableGateway('tb_users', $adapter);
+        $select = $tb_users->getSql()->select();
+        $select->where(['username' => $username]);
+        return $tb_users->selectWith($select); 
+    }
 }
