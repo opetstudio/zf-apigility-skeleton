@@ -115,43 +115,40 @@ class TbUsersResource extends DbConnectedResource
         // check oauth
         $identityArray= $this->getIdentity()->getAuthenticationIdentity();
         if(!$identityArray) throw new DomainException('Unauthorized', 401);
-        $client_id = $identityArray['client_id'];
-        $username = $identityArray['user_id'];
-        $oauthClientSet = $this->table->getOauthClient($client_id, $username);
-        if ($oauthClientSet->count() === 0) {
-            throw new DomainException('User not found', 403);
-        }
-        $oauthClient = $oauthClientSet->current();
-        $scope = $oauthClient['scope'];
-        // end check oauth
-
-        // echo "scope=".$scope;
-        // echo "username=".$username;
+        $sessionClient_id = $identityArray['client_id'];
+        $sessionUsername = $identityArray['user_id'];
         
-        $destRecord = $this->fetch($id);
-        // echo "destRecord.username=".$destRecord['username'];
-        // if($username == $destRecord->username)
-        if($scope < 10) {
+        $resultSet = $this->table->fetchOneByUsername($sessionUsername);
+        if ($resultSet->count() === 0) {
+            throw new DomainException('Unauthorized', 401);
+        }
+        $sessionUser = $resultSet->current(); 
+        $destinationUser = $this->fetch($id);
+        $newUsername = $destinationUser['username'];
+       
+        if($sessionUser['scope'] < 10) {
             // allow
         } else {
-            if($username != $destRecord['username']) throw new DomainException('Unauthorize', 403);
+            if($sessionUser['username'] != $destinationUser['username']) throw new DomainException('Unauthorize', 403);
         }
         
-        $data->modifiedby = $identityArray['user_id'];
-        $data->client_id = $destRecord['client_id'];
-        if(!$data->username) $data->username = $destRecord['username'];
+        $data->modifiedby = $sessionUser['username'];
+      
+        if($data->username && $data->username != $destinationUser['username']) {
+            $data->client_id = $data->username;
+            $newUsername = $data->username;
+        }
+
         if($data->password) {
             $bcrypt = new Bcrypt();
             $data->password = $bcrypt->create($data->password);
         }
 
-        // $resultSet = $this->table->getUserWithCity($id);
-        // if ($resultSet->count() === 0) {
-        //     throw new DomainException('User not found', 404);
-        // }
-        // return $resultSet->current();
-
-        $this->table->patchUser($id, $data);
-        return $this->fetch($id);
+        $this->table->patchUser($id, $data, $destinationUser['username'], $sessionUsername);
+        $resultSet = $this->table->fetchOneByUsername($newUsername);
+        if ($resultSet->count() === 0) {
+            throw new DomainException('Unauthorized', 401);
+        }
+        return $resultSet->current();
     }
 }

@@ -77,6 +77,10 @@ class TbUsersTableGateway extends TableGateway
         $select = $this->getSql()->select(array($this->id => $id));
         return $this->selectWith($select); 
     }
+    public function fetchOneById($id) {
+        $select = $this->getSql()->select(array($this->id => $id));
+        return $this->selectWith($select); 
+    }
 
     /**
      * @return DbSelect
@@ -153,7 +157,7 @@ class TbUsersTableGateway extends TableGateway
         // $table->insert($data);
         return $newData;
     }
-    public function patchUser($id, $data) {
+    public function patchUser($id, $data, $destinationUsername = NULL, $sessionUsername = NULL) {
         // $rowset      = $artistTable->select(['id' => 2]);
         // $select = $this->getSql()->select(['id' => 2]);;
         // $artistRow   = $select->current();
@@ -172,6 +176,29 @@ class TbUsersTableGateway extends TableGateway
             // $oauth_scopes->update(["scope"=>$data->scope], array("client_id"=>$data->client_id));
             $oauth_clients = new TableGateway('oauth_clients', $adapter);
             $oauth_clients->update(["scope"=>$data->scope], array("client_id"=>$data->client_id, "user_id"=>$data->username));
+        }
+        if($data->password || ($data->username && $data->username != $destinationUsername)) {
+            $oauth_user_data = [];
+            $oauth_client_data = [];
+            $oauth_users = new TableGateway('oauth_users', $adapter);
+            $oauth_clients = new TableGateway('oauth_clients', $adapter);
+            if($data->password) {
+                $oauth_user_data['password'] = $data->password;
+            }
+            if($data->username && $data->username != $destinationUsername) {
+                $oauth_user_data['username'] = $data->username;
+                $oauth_client_data['client_id'] = $data->client_id;
+                $oauth_client_data['user_id'] = $data->username;
+                $oauth_clients->update($oauth_client_data, array("user_id"=>$destinationUsername)); 
+            }
+            $oauth_users->update($oauth_user_data, array("username"=>$destinationUsername));
+
+            // if($sessionUsername == $destinationUsername) {
+                // log out
+                $oauth_access_tokens = new TableGateway('oauth_access_tokens', $adapter);
+                // $this->db->query('DELETE FROM `oauth_access_tokens` where access_token = "'.$identityArray['access_token'].'"', Adapter::QUERY_MODE_EXECUTE);
+                $oauth_access_tokens->delete(array("user_id"=>$destinationUsername));
+            // }
         }
 
         // Here is the catch  
