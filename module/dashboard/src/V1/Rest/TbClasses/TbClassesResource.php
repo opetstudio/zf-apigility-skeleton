@@ -37,6 +37,11 @@ class TbClassesResource extends DbConnectedResource
         // $data->fasilitator = $identityArray['user_id'];
         // $data->createdby = $identityArray['user_id'];
         $data->modifiedby = $identityArray['user_id'];
-        return $this->table->updateData($id, $data);
+        $this->table->updateData($id, $data);
+        $resultSet = $this->table->fetchOne($id);
+        if ($resultSet->count() === 0) {
+            throw new DomainException('record not found', 404);
+        }
+        return $resultSet->current();
     }
 }

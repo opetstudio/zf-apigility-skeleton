@@ -29,6 +29,6 @@ class TbClassesTableGateway extends TableGateway
         // $gotch = $this->insert(json_decode(json_encode($data), true));
         // $lastInsertId = $this->getLastInsertValue();
         // $adapter = $this->getAdapter();
-        return $this->fetchOne($id);
+        // return $this->fetchOne($id);
     }
 }
