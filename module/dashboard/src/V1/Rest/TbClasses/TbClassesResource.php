@@ -18,7 +18,12 @@ class TbClassesResource extends DbConnectedResource
         $data->fasilitator = $identityArray['user_id'];
         $data->createdby = $identityArray['user_id'];
         $data->modifiedby = $identityArray['user_id'];
-        return $this->table->createNew($data);
+
+        $newDataRecord = $this->table->createNew($data);
+
+        // create
+
+        return $newDataRecord;
     }
     public function patch($id, $data) {
         $identityArray= $this->getIdentity()->getAuthenticationIdentity();
@@ -27,7 +32,7 @@ class TbClassesResource extends DbConnectedResource
         $username = $identityArray['user_id'];
 
         // rec detail
-        $resultSet = $this->table->fetchOne($id);
+        $resultSet = $this->table->fetchOneRecord($id);
         if ($resultSet->count() === 0) {
             throw new DomainException('record not found for id '.$id, 404);
         }
@@ -39,7 +44,7 @@ class TbClassesResource extends DbConnectedResource
         // $data->createdby = $identityArray['user_id'];
         $data->modifiedby = $identityArray['user_id'];
         $this->table->updateData($id, $data);
-        $resultSet = $this->table->fetchOne($id);
+        $resultSet = $this->table->fetchOneRecord($id);
         if ($resultSet->count() === 0) {
             throw new DomainException('record not found', 404);
         }

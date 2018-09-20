@@ -3,6 +3,7 @@ namespace dashboard\V1\Rest\TbUsers;
 
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Paginator\Adapter\DbSelect;
+use DomainException;
 
 
 class TbUsersTableGateway extends TableGateway

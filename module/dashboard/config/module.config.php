@@ -136,6 +136,15 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rest.tb-class-participants' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/classparticipants[/:tb_class_participants_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbClassParticipants\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -155,6 +164,7 @@ return [
             13 => 'dashboard.rpc.logout',
             14 => 'dashboard.rpc.get-login-status',
             15 => 'dashboard.rpc.get-login-status',
+            16 => 'dashboard.rest.tb-class-participants',
         ],
     ],
     'zf-rest' => [
@@ -269,7 +279,7 @@ return [
             'service_name' => 'tb_users',
         ],
         'dashboard\\V1\\Rest\\TbClasses\\Controller' => [
-            'listener' => 'dashboard\\V1\\Rest\\TbClasses\\TbClassesResource',
+            'listener' => \dashboard\V1\Rest\TbClasses\TbClassesResource::class,
             'route_name' => 'dashboard.rest.tb-classes',
             'route_identifier_name' => 'tb_classes_id',
             'collection_name' => 'tb_classes',
@@ -290,6 +300,30 @@ return [
             'collection_class' => \dashboard\V1\Rest\TbClasses\TbClassesCollection::class,
             'service_name' => 'tb_classes',
         ],
+        'dashboard\\V1\\Rest\\TbClassParticipants\\Controller' => [
+            'listener' => \dashboard\V1\Rest\TbClassParticipants\TbClassParticipantsResource::class,
+            'route_name' => 'dashboard.rest.tb-class-participants',
+            'route_identifier_name' => 'tb_class_participants_id',
+            'collection_name' => 'tb_class_participants',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [
+                0 => 'class_id',
+            ],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbClassParticipants\TbClassParticipantsEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbClassParticipants\TbClassParticipantsCollection::class,
+            'service_name' => 'tb_class_participants',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
@@ -307,6 +341,7 @@ return [
             'dashboard\\V1\\Rest\\TbClasses\\Controller' => 'HalJson',
             'dashboard\\V1\\Rpc\\Logout\\Controller' => 'Json',
             'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller' => 'Json',
+            'dashboard\\V1\\Rest\\TbClassParticipants\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -379,6 +414,11 @@ return [
                 1 => 'application/json',
                 2 => 'application/*+json',
             ],
+            'dashboard\\V1\\Rest\\TbClassParticipants\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -434,6 +474,10 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbClassParticipants\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -513,6 +557,18 @@ return [
                 'route_identifier_name' => 'tb_classes_id',
                 'is_collection' => true,
             ],
+            \dashboard\V1\Rest\TbClassParticipants\TbClassParticipantsEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-class-participants',
+                'route_identifier_name' => 'tb_class_participants_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbClassParticipants\TbClassParticipantsCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-class-participants',
+                'route_identifier_name' => 'tb_class_participants_id',
+                'is_collection' => true,
+            ],
         ],
     ],
     'zf-apigility' => [
@@ -549,14 +605,6 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\TbParticipant\\TbParticipantResource\\Table',
             ],
-            // 'dashboard\\V1\\Rest\\TbClasses\\TbClassesResource' => [
-            //     'adapter_name' => 'mysqlpdo',
-            //     'table_name' => 'tb_classes',
-            //     'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
-            //     'controller_service_name' => 'dashboard\\V1\\Rest\\TbClasses\\Controller',
-            //     'entity_identifier_name' => '_id',
-            //     'table_service' => 'dashboard\\V1\\Rest\\TbClasses\\TbClassesResource\\Table',
-            // ],
         ],
     ],
     'zf-content-validation' => [
@@ -580,6 +628,9 @@ return [
         ],
         'dashboard\\V1\\Rest\\TbClasses\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rest\\TbClasses\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbClassParticipants\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbClassParticipants\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -1343,6 +1394,109 @@ return [
                 ],
                 'name' => 'venue',
             ],
+            5 => [
+                'required' => false,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'class_participants',
+            ],
+        ],
+        'dashboard\\V1\\Rest\\TbClassParticipants\\Validator' => [
+            0 => [
+                'name' => 'uuid',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'status',
+                'required' => true,
+                'filters' => [],
+                'validators' => [],
+            ],
+            2 => [
+                'name' => 'modifiedon',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
+            ],
+            3 => [
+                'name' => 'createdon',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
+            ],
+            4 => [
+                'name' => 'createdby',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            5 => [
+                'name' => 'modifiedby',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-mvc-auth' => [
@@ -1423,6 +1577,22 @@ return [
                     ],
                 ],
             ],
+            'dashboard\\V1\\Rest\\TbClassParticipants\\Controller' => [
+                'collection' => [
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
+                ],
+                'entity' => [
+                    'GET' => true,
+                    'POST' => false,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ],
+            ],
         ],
     ],
     'service_manager' => [
@@ -1431,6 +1601,8 @@ return [
             \dashboard\V1\Rest\TbUsers\TbUsersTableGateway::class => \dashboard\V1\Rest\TbUsers\TbUsersTableGatewayFactory::class,
             \dashboard\V1\Rest\TbClasses\TbClassesResource::class => \dashboard\V1\Rest\TbClasses\TbClassesResourceFactory::class,
             \dashboard\V1\Rest\TbClasses\TbClassesTableGateway::class => \dashboard\V1\Rest\TbClasses\TbClassesTableGatewayFactory::class,
+            \dashboard\V1\Rest\TbClassParticipants\TbClassParticipantsResource::class => \dashboard\V1\Rest\TbClassParticipants\TbClassParticipantsResourceFactory::class,
+            \dashboard\V1\Rest\TbClassParticipants\TbClassParticipantsTableGateway::class => \dashboard\V1\Rest\TbClassParticipants\TbClassParticipantsTableGatewayFactory::class,
         ],
     ],
     'controllers' => [
