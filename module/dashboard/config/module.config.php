@@ -145,6 +145,36 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rpc.classes-update-batch' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/classes-update-batch',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\ClassesUpdateBatch\\Controller',
+                        'action' => 'classesUpdateBatch',
+                    ],
+                ],
+            ],
+            'dashboard.rpc.classes-delete-participant' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/classes-delete-participant',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\ClassesDeleteParticipant\\Controller',
+                        'action' => 'classesDeleteParticipant',
+                    ],
+                ],
+            ],
+            'dashboard.rpc.class-evaluated-participant' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/class-evaluated-participant',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller',
+                        'action' => 'classEvaluatedParticipant',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -165,6 +195,9 @@ return [
             14 => 'dashboard.rpc.get-login-status',
             15 => 'dashboard.rpc.get-login-status',
             16 => 'dashboard.rest.tb-class-participants',
+            17 => 'dashboard.rpc.classes-update-batch',
+            18 => 'dashboard.rpc.classes-delete-participant',
+            19 => 'dashboard.rpc.class-evaluated-participant',
         ],
     ],
     'zf-rest' => [
@@ -342,6 +375,9 @@ return [
             'dashboard\\V1\\Rpc\\Logout\\Controller' => 'Json',
             'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller' => 'Json',
             'dashboard\\V1\\Rest\\TbClassParticipants\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rpc\\ClassesUpdateBatch\\Controller' => 'Json',
+            'dashboard\\V1\\Rpc\\ClassesDeleteParticipant\\Controller' => 'Json',
+            'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -419,6 +455,21 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'dashboard\\V1\\Rpc\\ClassesUpdateBatch\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
+            'dashboard\\V1\\Rpc\\ClassesDeleteParticipant\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
+            'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -478,6 +529,18 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rest\\TbClassParticipants\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\ClassesUpdateBatch\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\ClassesDeleteParticipant\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -1593,6 +1656,50 @@ return [
                     'DELETE' => true,
                 ],
             ],
+            'dashboard\\V1\\Rpc\\BadgesUpdateBatch\\Controller' => [
+                'actions' => [
+                    'BadgesUpdateBatch' => [
+                        'GET' => false,
+                        'POST' => true,
+                        'PUT' => false,
+                        'PATCH' => false,
+                        'DELETE' => false,
+                    ],
+                ],
+            ],
+            'dashboard\\V1\\Rpc\\ClassesUpdateBatch\\Controller' => [
+                'actions' => [
+                    'ClassesUpdateBatch' => [
+                        'GET' => false,
+                        'POST' => true,
+                        'PUT' => false,
+                        'PATCH' => false,
+                        'DELETE' => false,
+                    ],
+                ],
+            ],
+            'dashboard\\V1\\Rpc\\ClassesDeleteParticipant\\Controller' => [
+                'actions' => [
+                    'ClassesDeleteParticipant' => [
+                        'GET' => true,
+                        'POST' => true,
+                        'PUT' => false,
+                        'PATCH' => false,
+                        'DELETE' => false,
+                    ],
+                ],
+            ],
+            'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller' => [
+                'actions' => [
+                    'ClassEvaluatedParticipant' => [
+                        'GET' => false,
+                        'POST' => true,
+                        'PUT' => false,
+                        'PATCH' => false,
+                        'DELETE' => false,
+                    ],
+                ],
+            ],
         ],
     ],
     'service_manager' => [
@@ -1615,6 +1722,9 @@ return [
             'dashboard\\V1\\Rpc\\GetUserProfile\\Controller' => \dashboard\V1\Rpc\GetUserProfile\GetUserProfileControllerFactory::class,
             'dashboard\\V1\\Rpc\\Logout\\Controller' => \dashboard\V1\Rpc\Logout\LogoutControllerFactory::class,
             'dashboard\\V1\\Rpc\\GetLoginStatus\\Controller' => \dashboard\V1\Rpc\GetLoginStatus\GetLoginStatusControllerFactory::class,
+            'dashboard\\V1\\Rpc\\ClassesUpdateBatch\\Controller' => \dashboard\V1\Rpc\ClassesUpdateBatch\ClassesUpdateBatchControllerFactory::class,
+            'dashboard\\V1\\Rpc\\ClassesDeleteParticipant\\Controller' => \dashboard\V1\Rpc\ClassesDeleteParticipant\ClassesDeleteParticipantControllerFactory::class,
+            'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller' => \dashboard\V1\Rpc\ClassEvaluatedParticipant\ClassEvaluatedParticipantControllerFactory::class,
         ],
     ],
     'zf-rpc' => [
@@ -1674,6 +1784,27 @@ return [
                 0 => 'GET',
             ],
             'route_name' => 'dashboard.rpc.get-login-status',
+        ],
+        'dashboard\\V1\\Rpc\\ClassesUpdateBatch\\Controller' => [
+            'service_name' => 'classesUpdateBatch',
+            'http_methods' => [
+                0 => 'POST',
+            ],
+            'route_name' => 'dashboard.rpc.classes-update-batch',
+        ],
+        'dashboard\\V1\\Rpc\\ClassesDeleteParticipant\\Controller' => [
+            'service_name' => 'classesDeleteParticipant',
+            'http_methods' => [
+                0 => 'POST',
+            ],
+            'route_name' => 'dashboard.rpc.classes-delete-participant',
+        ],
+        'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller' => [
+            'service_name' => 'classEvaluatedParticipant',
+            'http_methods' => [
+                0 => 'POST',
+            ],
+            'route_name' => 'dashboard.rpc.class-evaluated-participant',
         ],
     ],
 ];
