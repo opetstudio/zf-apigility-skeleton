@@ -1395,7 +1395,7 @@ return [
                 'name' => 'venue',
             ],
             5 => [
-                'required' => false,
+                'required' => true,
                 'validators' => [],
                 'filters' => [],
                 'name' => 'class_participants',
