@@ -43,11 +43,11 @@ class ClassEvaluatedParticipantController extends AbstractActionController
         // $validator->getSelect()->where('class_id = '.$id);
         // $validator->getSelect()->where(array('participant_id' => $participantId));
         $validator->getSelect()->where('participant_id = '.$participantId.' and createdby = "'.$session_username.'"');
+        
+        $tb_class_participants = new TableGateway('tb_class_participants', $adapter);
 
         if ($validator->isValid($classId)) {
             // delete
-            $tb_class_participants = new TableGateway('tb_class_participants', $adapter);
-
             $sql = 'UPDATE tb_class_participants'
                 . ' SET is_evaluated = 1'
                 . ' WHERE class_id = '.$classId.' and participant_id = '.$participantId.'';
@@ -60,7 +60,7 @@ class ClassEvaluatedParticipantController extends AbstractActionController
                 // throw new DomainException('record not found for id '.$id, 404);
             } else {
                 $recDetail = $result->current();
-                return new ViewModel($recDetail); 
+                return new ViewModel(['status' => true, 'class_id'=>$class_id, 'participant_id'=>$participant_id, 'createdby'=>$session_client_id, 'responseMessage'=>'success', 'data'=>$recDetail]); 
             }
             // $byId = [];
             // $allIds = [];
@@ -75,6 +75,24 @@ class ClassEvaluatedParticipantController extends AbstractActionController
             // foreach ($messages as $message) {
             //     echo "$message\n";
             // }
+            // create new
+            $tb_class_participants->insert([
+                'class_id'=>$classId,
+                'participant_id'=>$participantId,
+                'status'=>'publish',
+                'createdby'=>$session_username,
+                'modifiedby'=>$session_username,
+                'is_evaluated'=>1
+                ]);
+        //         $gotch = $this->insert(json_decode(json_encode($data), true));
+            // $lastInsertId = $tb_class_participants->getLastInsertValue();
+            $result = $this->db->query('SELECT * FROM `tb_class_participants` where class_id = '.$classId.' and participant_id = '.$participantId.'', Adapter::QUERY_MODE_EXECUTE);
+            if ($result->count() === 0) {
+                // throw new DomainException('record not found for id '.$id, 404);
+            } else {
+                $recDetail = $result->current();
+                return new ViewModel(['status' => true, 'class_id'=>$classId, 'participant_id'=>$participantId, 'createdby'=>$session_client_id, 'responseMessage'=>'success', 'data'=>$recDetail]);  
+            }
         }
         return new ViewModel(['status' => false, 'class_id' => $classId, 'participant_id' => $participantId, 'createdby' => $session_username, 'responseMessage' => 'evaluated failed']);
     }

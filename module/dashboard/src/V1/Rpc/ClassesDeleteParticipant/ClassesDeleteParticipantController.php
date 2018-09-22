@@ -52,10 +52,11 @@ class ClassesDeleteParticipantController extends AbstractActionController
             return new ViewModel(['status' => true, 'class_id' => $classId, 'participant_id' => $participantId]);
         } else {
            // participant_id is invalid; print the reason
-            $messages = $validator->getMessages();
-            foreach ($messages as $message) {
-                echo "$message\n";
-            }
+            // $messages = $validator->getMessages();
+            // foreach ($messages as $message) {
+            //     echo "$message\n";
+            // }
+            return new ViewModel(['status' => true, 'class_id' => $classId, 'participant_id' => $participantId]);
         }
         return new ViewModel(['status' => false, 'class_id' => $classId, 'participant_id' => $participantId, 'createdby' => $session_username, 'responseMessage' => 'remove failed']);
     }
