@@ -13,11 +13,16 @@ class TbClassesResource extends DbConnectedResource
         if(!$identityArray) throw new DomainException('Unauthorized', 401);
         $client_id = $identityArray['client_id'];
         $username = $identityArray['user_id'];
+        $userResultSet = $this->table->fetchOneUserByUsername($username);
+        if ($userResultSet->count() === 0) {
+            throw new DomainException('Unauthorized', 401);
+        }
+        $userDetail = $userResultSet->current(); 
         // $resultSet = $this->table->fetchOneUserByUsername($username);
         
-        $data->fasilitator = $identityArray['user_id'];
-        $data->createdby = $identityArray['user_id'];
-        $data->modifiedby = $identityArray['user_id'];
+        $data->fasilitator = $userDetail['_id'];
+        $data->createdby = $userDetail['_id'];
+        $data->modifiedby = $userDetail['_id'];
 
         $newDataRecord = $this->table->createNew($data);
 
@@ -30,6 +35,11 @@ class TbClassesResource extends DbConnectedResource
         if(!$identityArray) throw new DomainException('Unauthorized', 401);
         $client_id = $identityArray['client_id'];
         $username = $identityArray['user_id'];
+        $userResultSet = $this->table->fetchOneUserByUsername($username);
+        if ($userResultSet->count() === 0) {
+            throw new DomainException('Unauthorized', 401);
+        }
+        $userDetail = $userResultSet->current(); 
 
         // rec detail
         $resultSet = $this->table->fetchOneRecord($id);
@@ -38,11 +48,11 @@ class TbClassesResource extends DbConnectedResource
         }
 
         $recDetail = $resultSet->current();
-        if($recDetail['fasilitator'] != $username) throw new DomainException('forbidden fasilitator('.$recDetail['fasilitator'].') for username '.$username, 404);
+        if($recDetail['fasilitator'] != $userDetail['_id']) throw new DomainException('forbidden fasilitator('.$recDetail['fasilitator'].') for username '.$username, 404);
 
         // $data->fasilitator = $identityArray['user_id'];
         // $data->createdby = $identityArray['user_id'];
-        $data->modifiedby = $identityArray['user_id'];
+        $data->modifiedby = $userDetail['_id'];
         $this->table->updateData($id, $data);
         $resultSet = $this->table->fetchOneRecord($id);
         if ($resultSet->count() === 0) {

@@ -175,6 +175,15 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rest.tb-inspect' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/inspects[/:tb_inspect_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbInspect\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -198,6 +207,7 @@ return [
             17 => 'dashboard.rpc.classes-update-batch',
             18 => 'dashboard.rpc.classes-delete-participant',
             19 => 'dashboard.rpc.class-evaluated-participant',
+            20 => 'dashboard.rest.tb-inspect',
         ],
     ],
     'zf-rest' => [
@@ -357,6 +367,28 @@ return [
             'collection_class' => \dashboard\V1\Rest\TbClassParticipants\TbClassParticipantsCollection::class,
             'service_name' => 'tb_class_participants',
         ],
+        'dashboard\\V1\\Rest\\TbInspect\\Controller' => [
+            'listener' => 'dashboard\\V1\\Rest\\TbInspect\\TbInspectResource',
+            'route_name' => 'dashboard.rest.tb-inspect',
+            'route_identifier_name' => 'tb_inspect_id',
+            'collection_name' => 'tb_inspect',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => '1000000',
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbInspect\TbInspectEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbInspect\TbInspectCollection::class,
+            'service_name' => 'tb_inspect',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
@@ -378,6 +410,7 @@ return [
             'dashboard\\V1\\Rpc\\ClassesUpdateBatch\\Controller' => 'Json',
             'dashboard\\V1\\Rpc\\ClassesDeleteParticipant\\Controller' => 'Json',
             'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller' => 'Json',
+            'dashboard\\V1\\Rest\\TbInspect\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -470,6 +503,11 @@ return [
                 1 => 'application/json',
                 2 => 'application/*+json',
             ],
+            'dashboard\\V1\\Rest\\TbInspect\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -541,6 +579,10 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbInspect\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -632,6 +674,18 @@ return [
                 'route_identifier_name' => 'tb_class_participants_id',
                 'is_collection' => true,
             ],
+            \dashboard\V1\Rest\TbInspect\TbInspectEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-inspect',
+                'route_identifier_name' => 'tb_inspect_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbInspect\TbInspectCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-inspect',
+                'route_identifier_name' => 'tb_inspect_id',
+                'is_collection' => true,
+            ],
         ],
     ],
     'zf-apigility' => [
@@ -660,6 +714,14 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\TbConference\\TbConferenceResource\\Table',
             ],
+            'dashboard\\V1\\Rest\\TbInspect\\TbInspectResource' => [
+                'adapter_name' => 'mysqlpdo',
+                'table_name' => 'tb_inspect',
+                'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+                'controller_service_name' => 'dashboard\\V1\\Rest\\TbInspect\\Controller',
+                'entity_identifier_name' => '_id',
+                'table_service' => 'dashboard\\V1\\Rest\\TbInspect\\TbInspectResource\\Table',
+            ],
         ],
     ],
     'zf-content-validation' => [
@@ -686,6 +748,9 @@ return [
         ],
         'dashboard\\V1\\Rest\\TbClassParticipants\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rest\\TbClassParticipants\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbInspect\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbInspect\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -1551,6 +1616,73 @@ return [
                         ],
                     ],
                 ],
+            ],
+        ],
+        'dashboard\\V1\\Rest\\TbInspect\\Validator' => [
+            0 => [
+                'name' => 'participant_id',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
+            ],
+            1 => [
+                'name' => 'badge_id',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
+            ],
+            2 => [
+                'name' => 'user_id',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
+            ],
+            3 => [
+                'name' => 'class_id',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
+            ],
+            4 => [
+                'name' => 'is_evaluated',
+                'required' => false,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
             ],
         ],
     ],

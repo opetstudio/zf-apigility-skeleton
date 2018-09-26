@@ -15,12 +15,18 @@ class TbUsersResource extends DbConnectedResource
         //  if(!$identityArray) throw new DomainException('Unauthorized', 401);
          $client_id = $identityArray['client_id'];
          $username = $identityArray['user_id'];
-         $oauthClientSet = $this->table->getOauthClient($client_id, $username);
-         if ($oauthClientSet->count() === 0) {
-             throw new DomainException('User not found', 404);
-         }
-         $oauthClient = $oauthClientSet->current();
-         $scope = $oauthClient['scope'];
+
+            $currentUserSet = $this->table->fetchOneByUsername($username);
+            if ($currentUserSet->count() === 0) throw new DomainException('Unauthorized', 401);
+            $currentUser = $currentUserSet->current();
+
+        //  $oauthClientSet = $this->table->getOauthClient($client_id, $username);
+        //  if ($oauthClientSet->count() === 0) {
+        //      throw new DomainException('User not found', 404);
+        //  }
+        //  $oauthClient = $oauthClientSet->current();
+        //  $scope = $oauthClient['scope'];
+         $scope = (int) $currentUser['scope'];
          if($scope > 10) throw new DomainException('session timeout', 403);
          // end check oauth
 
@@ -37,17 +43,16 @@ class TbUsersResource extends DbConnectedResource
         // check oauth
         $identityArray= $this->getIdentity()->getAuthenticationIdentity();
         // if(!$identityArray) throw new DomainException('Unauthorized', 401);
-        // $client_id = $identityArray['client_id'];
+        $client_id = $identityArray['client_id'];
         $username = $identityArray['user_id'];
+        // print_r($identityArray);
         // $oauthClientSet = $this->table->getOauthClient($client_id, $username);
         // if ($oauthClientSet->count() === 0) {
         //     throw new DomainException('User not found', 404);
         // }
         // $oauthClient = $oauthClientSet->current();
         $currentUserSet = $this->table->fetchOneByUsername($username);
-        if ($currentUserSet->count() === 0) {
-            throw new DomainException('User not found', 404);
-        }
+        if ($currentUserSet->count() === 0) throw new DomainException('Unauthorized', 401);
         $currentUser = $currentUserSet->current();
 
         $scope = (int) $currentUser['scope'];
@@ -74,12 +79,17 @@ class TbUsersResource extends DbConnectedResource
          if(!$identityArray) throw new DomainException('Unauthorized', 401);
          $client_id = $identityArray['client_id'];
          $username = $identityArray['user_id'];
-         $oauthClientSet = $this->table->getOauthClient($client_id, $username);
-         if ($oauthClientSet->count() === 0) {
-             throw new DomainException('User not found', 404);
-         }
-         $oauthClient = $oauthClientSet->current();
-         $scope = $oauthClient['scope'];
+        $currentUserSet = $this->table->fetchOneByUsername($username);
+        if ($currentUserSet->count() === 0) throw new DomainException('Unauthorized', 401);
+        $currentUser = $currentUserSet->current();
+
+        //  $oauthClientSet = $this->table->getOauthClient($client_id, $username);
+        //  if ($oauthClientSet->count() === 0) {
+        //      throw new DomainException('User not found', 404);
+        //  }
+        //  $oauthClient = $oauthClientSet->current();
+        //  $scope = $oauthClient['scope'];
+         $scope = (int) $currentUser['scope'];
          // end check oauth        // $currentUserSet = $this->table->fetchOneByUsername($username);
         // if ($currentUserSet->count() === 0) {
         //     throw new DomainException('User not found', 404);
@@ -87,13 +97,13 @@ class TbUsersResource extends DbConnectedResource
         // $currentUser = $currentUserSet->current();
         
 
-        if($scope > 10) throw new DomainException('Unauthorized', 404);
+        if($scope > 10) throw new DomainException('Forbidden', 4043);
         // $result = json_decode($identityArray, true);
         // print_r($result);
         // note, by default user_id is the email (username column in oauth_users table)
         // $userId = $identityArray['user_id']; 
-        $data->createdby = $identityArray['user_id'];
-        $data->modifiedby = $identityArray['user_id'];
+        $data->createdby = $currentUser['_id'];
+        $data->modifiedby = $currentUser['_id'];
         $data->status = 'publish';
         $data->password = $bcrypt->create($data->password);
         // print_r($data);
@@ -132,7 +142,7 @@ class TbUsersResource extends DbConnectedResource
             if($sessionUser['username'] != $destinationUser['username']) throw new DomainException('Unauthorize', 403);
         }
         
-        $data->modifiedby = $sessionUser['username'];
+        $data->modifiedby = $sessionUser['_id'];
       
         if($data->username && $data->username != $destinationUser['username']) {
             $data->client_id = $data->username;

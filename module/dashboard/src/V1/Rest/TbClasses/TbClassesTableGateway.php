@@ -13,6 +13,7 @@ class TbClassesTableGateway extends TableGateway
     protected $id = '_id';
     protected $tb_class_participants = 'tb_class_participants';
     protected $tb_participant = 'tb_participant';
+    protected $tb_inspect = 'tb_inspect';
     public function fetchOneRecord($id) {
         $table = $this->getTable();
         $select = $this->getSql()->select();
@@ -34,6 +35,7 @@ class TbClassesTableGateway extends TableGateway
 
         $tb_participant = new TableGateway($this->tb_participant, $adapter);
         $tb_class_participants = new TableGateway($this->tb_class_participants, $adapter);
+        $tb_inspect = new TableGateway($this->tb_inspect, $adapter);
 
         foreach ($dataObj['class_participants'] as $participant_id) {
             $participant_select = $tb_participant->getSql()->select();
@@ -51,12 +53,20 @@ class TbClassesTableGateway extends TableGateway
                     'createdby'=>$newDataRecord['createdby'],
                     'modifiedby'=>$newDataRecord['createdby']
                 ]);
+                $tb_inspect->insert([
+                    'participant_id'=>$participant_detail->_id,
+                    'class_id'=>$newDataRecord['_id'],
+                    'badge_id'=>$newDataRecord['badge'],
+                    'user_id'=>$newDataRecord['createdby'],
+                    'is_evaluated'=>0,
+                ]);
             }
         }
 
         return $newDataRecord;
     }
     public function updateData($id, $data) {
+        $class_id = $id;
         $dataObj = json_decode(json_encode($data), true);
         $candidateNewData = $dataObj;
         unset($candidateNewData['class_participants']); 
@@ -65,16 +75,31 @@ class TbClassesTableGateway extends TableGateway
         // $where = array($this->identifierName => $id);
         // $where = ['._id' => $id];
 
+        $classDetailResultSet = $this->fetchOneRecord($id);
+        if ($classDetailResultSet->count() === 0) {
+            throw new DomainException('Record not found', 404);
+        }
+        $classDetail = $classDetailResultSet->current();
+
         // $tb_class_participants = new TableGateway($this->tb_class_participants, $adapter);
 
         $this->update(json_decode(json_encode($candidateNewData), true), $where);
+        $newBadgeId = $classDetail['badge'];
+        if($candidateNewData['badge']) {
+            $sql2 = 'UPDATE tb_inspect SET badge_id = '.$candidateNewData['badge'].' WHERE class_id = '.$class_id.'';
+            $statement2 = $adapter->query($sql2);
+            $statement2->execute();
+            $newBadgeId = $candidateNewData['badge'];
+        }
 
         // foreach ($dataObj['class_participants'] as $participant_id) {
         //     $participant_detail = $tb_participant_resultset->current(); 
         // }
-
+        
         $query = 'INSERT INTO ' . $this->tb_class_participants . ' (`class_id`, `status`, `participant_id`, `createdby`, `modifiedby`) VALUES ';
+        $query2 = 'INSERT INTO ' . $this->tb_inspect . ' (`participant_id`, `badge_id`, `user_id`, `class_id`, `is_evaluated`) VALUES ';
         $queryVals = array();
+        $queryVals2 = array();
 
          foreach ($dataObj['class_participants'] as $participant_id) {
               if($participant_id){
@@ -116,7 +141,8 @@ class TbClassesTableGateway extends TableGateway
                 if ($validator->isValid($id)) {
                 // if ($validator->isValid()) {
                     // participant_id appears to be valid
-                    $queryVals[] = "('".$id."', 'publish', '".$participant_id."', '".$candidateNewData["modifiedby"]."', '".$candidateNewData["modifiedby"]."')";  
+                    $queryVals[] = "('".$class_id."', 'publish', '".$participant_id."', '".$candidateNewData["modifiedby"]."', '".$candidateNewData["modifiedby"]."')";  
+                    $queryVals2[] = "('".$participant_id."', '".$newBadgeId."', '".$classDetail['fasilitator']."', '".$class_id."', 0)";  
                 }
                 else {
                     // participant_id is invalid; print the reason
@@ -148,6 +174,7 @@ class TbClassesTableGateway extends TableGateway
         if (!empty($queryVals)) {
             // print_r($queryVals);
             $adapter->query($query . implode(',', $queryVals))->execute();
+            $adapter->query($query2. implode(',', $queryVals2))->execute();
         }
 
         // $gotch = $this->insert(json_decode(json_encode($data), true));
