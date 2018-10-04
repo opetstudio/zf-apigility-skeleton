@@ -1415,7 +1415,7 @@ return [
                 ],
             ],
             7 => [
-                'required' => true,
+                'required' => false,
                 'validators' => [],
                 'filters' => [],
                 'name' => 'status',

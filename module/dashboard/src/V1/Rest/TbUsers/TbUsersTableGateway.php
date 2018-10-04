@@ -172,13 +172,14 @@ class TbUsersTableGateway extends TableGateway
         // $where = array($this->identifierName => $id);
         // $where = ['._id' => $id];
         $this->update(json_decode(json_encode($data), true), $where);
+        
         if($data->scope) {
             // $oauth_scopes = new TableGateway('oauth_scopes', $adapter);
             // $oauth_scopes->update(["scope"=>$data->scope], array("client_id"=>$data->client_id));
             $oauth_clients = new TableGateway('oauth_clients', $adapter);
             $oauth_clients->update(["scope"=>$data->scope], array("client_id"=>$data->client_id, "user_id"=>$data->username));
         }
-        if($data->password || ($data->username && $data->username != $destinationUsername)) {
+        if($data->password || ($data->username && $data->username != $destinationUsername) || $data->status == 'remove') {
             $oauth_user_data = [];
             $oauth_client_data = [];
             $oauth_users = new TableGateway('oauth_users', $adapter);
@@ -192,7 +193,8 @@ class TbUsersTableGateway extends TableGateway
                 $oauth_client_data['user_id'] = $data->username;
                 $oauth_clients->update($oauth_client_data, array("user_id"=>$destinationUsername)); 
             }
-            $oauth_users->update($oauth_user_data, array("username"=>$destinationUsername));
+            if($data->status == 'remove') $oauth_users->delete(array("username"=>$destinationUsername));
+            else $oauth_users->update($oauth_user_data, array("username"=>$destinationUsername));
 
             // if($sessionUsername == $destinationUsername) {
                 // log out
