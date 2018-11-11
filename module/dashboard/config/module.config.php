@@ -184,6 +184,25 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rest.tb-files' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/files[/:tb_files_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbFiles\\Controller',
+                    ],
+                ],
+            ],
+            'dashboard.rpc.files-update-batch' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/files-update-batch',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rpc\\FilesUpdateBatch\\Controller',
+                        'action' => 'filesUpdateBatch',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -208,6 +227,8 @@ return [
             18 => 'dashboard.rpc.classes-delete-participant',
             19 => 'dashboard.rpc.class-evaluated-participant',
             20 => 'dashboard.rest.tb-inspect',
+            21 => 'dashboard.rest.tb-files',
+            22 => 'dashboard.rpc.files-update-batch',
         ],
     ],
     'zf-rest' => [
@@ -389,6 +410,28 @@ return [
             'collection_class' => \dashboard\V1\Rest\TbInspect\TbInspectCollection::class,
             'service_name' => 'tb_inspect',
         ],
+        'dashboard\\V1\\Rest\\TbFiles\\Controller' => [
+            'listener' => \dashboard\V1\Rest\TbFiles\TbFilesResource::class,
+            'route_name' => 'dashboard.rest.tb-files',
+            'route_identifier_name' => 'tb_files_id',
+            'collection_name' => 'tb_files',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbFiles\TbFilesEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbFiles\TbFilesCollection::class,
+            'service_name' => 'tb_files',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
@@ -411,6 +454,8 @@ return [
             'dashboard\\V1\\Rpc\\ClassesDeleteParticipant\\Controller' => 'Json',
             'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller' => 'Json',
             'dashboard\\V1\\Rest\\TbInspect\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rest\\TbFiles\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rpc\\FilesUpdateBatch\\Controller' => 'Json',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -508,6 +553,16 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'dashboard\\V1\\Rest\\TbFiles\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
+            'dashboard\\V1\\Rpc\\FilesUpdateBatch\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -583,6 +638,15 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rest\\TbInspect\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbFiles\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+                2 => 'multipart/form-data',
+            ],
+            'dashboard\\V1\\Rpc\\FilesUpdateBatch\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -686,6 +750,18 @@ return [
                 'route_identifier_name' => 'tb_inspect_id',
                 'is_collection' => true,
             ],
+            \dashboard\V1\Rest\TbFiles\TbFilesEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-files',
+                'route_identifier_name' => 'tb_files_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbFiles\TbFilesCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-files',
+                'route_identifier_name' => 'tb_files_id',
+                'is_collection' => true,
+            ],
         ],
     ],
     'zf-apigility' => [
@@ -751,6 +827,9 @@ return [
         ],
         'dashboard\\V1\\Rest\\TbInspect\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rest\\TbInspect\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbFiles\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbFiles\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -1685,6 +1764,36 @@ return [
                 'validators' => [],
             ],
         ],
+        'dashboard\\V1\\Rest\\TbFiles\\Validator' => [
+            0 => [
+                'required' => true,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'file_description',
+                'field_type' => 'String',
+            ],
+            1 => [
+                'required' => true,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'file_title',
+                'field_type' => 'String',
+            ],
+            2 => [
+                'required' => false,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'filecontent',
+                'field_type' => 'String',
+            ],
+            3 => [
+                'required' => false,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'status',
+                'field_type' => 'String',
+            ],
+        ],
     ],
     'zf-mvc-auth' => [
         'authorization' => [
@@ -1824,10 +1933,23 @@ return [
                     ],
                 ],
             ],
+            'dashboard\\V1\\Rpc\\FilesUpdateBatch\\Controller' => [
+                'actions' => [
+                    'FilesUpdateBatch' => [
+                        'GET' => false,
+                        'POST' => true,
+                        'PUT' => false,
+                        'PATCH' => false,
+                        'DELETE' => false,
+                    ],
+                ],
+            ],
         ],
     ],
     'service_manager' => [
         'factories' => [
+            \dashboard\V1\Rest\TbFiles\TbFilesResource::class => \dashboard\V1\Rest\TbFiles\TbFilesResourceFactory::class,
+            \dashboard\V1\Rest\TbFiles\TbFilesTableGateway::class => \dashboard\V1\Rest\TbFiles\TbFilesTableGatewayFactory::class,
             \dashboard\V1\Rest\TbUsers\TbUsersResource::class => \dashboard\V1\Rest\TbUsers\TbUsersResourceFactory::class,
             \dashboard\V1\Rest\TbUsers\TbUsersTableGateway::class => \dashboard\V1\Rest\TbUsers\TbUsersTableGatewayFactory::class,
             \dashboard\V1\Rest\TbClasses\TbClassesResource::class => \dashboard\V1\Rest\TbClasses\TbClassesResourceFactory::class,
@@ -1851,6 +1973,7 @@ return [
             'dashboard\\V1\\Rpc\\ClassesUpdateBatch\\Controller' => \dashboard\V1\Rpc\ClassesUpdateBatch\ClassesUpdateBatchControllerFactory::class,
             'dashboard\\V1\\Rpc\\ClassesDeleteParticipant\\Controller' => \dashboard\V1\Rpc\ClassesDeleteParticipant\ClassesDeleteParticipantControllerFactory::class,
             'dashboard\\V1\\Rpc\\ClassEvaluatedParticipant\\Controller' => \dashboard\V1\Rpc\ClassEvaluatedParticipant\ClassEvaluatedParticipantControllerFactory::class,
+            'dashboard\\V1\\Rpc\\FilesUpdateBatch\\Controller' => \dashboard\V1\Rpc\FilesUpdateBatch\FilesUpdateBatchControllerFactory::class,
         ],
     ],
     'zf-rpc' => [
@@ -1931,6 +2054,13 @@ return [
                 0 => 'POST',
             ],
             'route_name' => 'dashboard.rpc.class-evaluated-participant',
+        ],
+        'dashboard\\V1\\Rpc\\FilesUpdateBatch\\Controller' => [
+            'service_name' => 'filesUpdateBatch',
+            'http_methods' => [
+                0 => 'POST',
+            ],
+            'route_name' => 'dashboard.rpc.files-update-batch',
         ],
     ],
 ];
