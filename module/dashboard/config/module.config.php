@@ -203,6 +203,33 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rest.tb-gallery' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/gallerys[/:tb_gallery_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbGallery\\Controller',
+                    ],
+                ],
+            ],
+            'dashboard.rest.tb-album' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/albums[/:tb_album_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbAlbum\\Controller',
+                    ],
+                ],
+            ],
+            'dashboard.rest.tb-album-gallery' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/albumgallerys[/:tb_album_gallery_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -229,6 +256,9 @@ return [
             20 => 'dashboard.rest.tb-inspect',
             21 => 'dashboard.rest.tb-files',
             22 => 'dashboard.rpc.files-update-batch',
+            23 => 'dashboard.rest.tb-gallery',
+            24 => 'dashboard.rest.tb-album',
+            25 => 'dashboard.rest.tb-album-gallery',
         ],
     ],
     'zf-rest' => [
@@ -432,6 +462,72 @@ return [
             'collection_class' => \dashboard\V1\Rest\TbFiles\TbFilesCollection::class,
             'service_name' => 'tb_files',
         ],
+        'dashboard\\V1\\Rest\\TbGallery\\Controller' => [
+            'listener' => 'dashboard\\V1\\Rest\\TbGallery\\TbGalleryResource',
+            'route_name' => 'dashboard.rest.tb-gallery',
+            'route_identifier_name' => 'tb_gallery_id',
+            'collection_name' => 'tb_gallery',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => '200',
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbGallery\TbGalleryEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbGallery\TbGalleryCollection::class,
+            'service_name' => 'tb_gallery',
+        ],
+        'dashboard\\V1\\Rest\\TbAlbum\\Controller' => [
+            'listener' => 'dashboard\\V1\\Rest\\TbAlbum\\TbAlbumResource',
+            'route_name' => 'dashboard.rest.tb-album',
+            'route_identifier_name' => 'tb_album_id',
+            'collection_name' => 'tb_album',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbAlbum\TbAlbumEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbAlbum\TbAlbumCollection::class,
+            'service_name' => 'tb_album',
+        ],
+        'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller' => [
+            'listener' => 'dashboard\\V1\\Rest\\TbAlbumGallery\\TbAlbumGalleryResource',
+            'route_name' => 'dashboard.rest.tb-album-gallery',
+            'route_identifier_name' => 'tb_album_gallery_id',
+            'collection_name' => 'tb_album_gallery',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => '200',
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbAlbumGallery\TbAlbumGalleryEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbAlbumGallery\TbAlbumGalleryCollection::class,
+            'service_name' => 'tb_album_gallery',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
@@ -456,6 +552,9 @@ return [
             'dashboard\\V1\\Rest\\TbInspect\\Controller' => 'HalJson',
             'dashboard\\V1\\Rest\\TbFiles\\Controller' => 'HalJson',
             'dashboard\\V1\\Rpc\\FilesUpdateBatch\\Controller' => 'Json',
+            'dashboard\\V1\\Rest\\TbGallery\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rest\\TbAlbum\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -563,6 +662,21 @@ return [
                 1 => 'application/json',
                 2 => 'application/*+json',
             ],
+            'dashboard\\V1\\Rest\\TbGallery\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbAlbum\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -647,6 +761,18 @@ return [
                 2 => 'multipart/form-data',
             ],
             'dashboard\\V1\\Rpc\\FilesUpdateBatch\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbGallery\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbAlbum\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -762,6 +888,42 @@ return [
                 'route_identifier_name' => 'tb_files_id',
                 'is_collection' => true,
             ],
+            \dashboard\V1\Rest\TbGallery\TbGalleryEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-gallery',
+                'route_identifier_name' => 'tb_gallery_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbGallery\TbGalleryCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-gallery',
+                'route_identifier_name' => 'tb_gallery_id',
+                'is_collection' => true,
+            ],
+            \dashboard\V1\Rest\TbAlbum\TbAlbumEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-album',
+                'route_identifier_name' => 'tb_album_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbAlbum\TbAlbumCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-album',
+                'route_identifier_name' => 'tb_album_id',
+                'is_collection' => true,
+            ],
+            \dashboard\V1\Rest\TbAlbumGallery\TbAlbumGalleryEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-album-gallery',
+                'route_identifier_name' => 'tb_album_gallery_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbAlbumGallery\TbAlbumGalleryCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-album-gallery',
+                'route_identifier_name' => 'tb_album_gallery_id',
+                'is_collection' => true,
+            ],
         ],
     ],
     'zf-apigility' => [
@@ -798,6 +960,30 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\TbInspect\\TbInspectResource\\Table',
             ],
+            'dashboard\\V1\\Rest\\TbGallery\\TbGalleryResource' => [
+                'adapter_name' => 'mysqladapter',
+                'table_name' => 'tb_gallery',
+                'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+                'controller_service_name' => 'dashboard\\V1\\Rest\\TbGallery\\Controller',
+                'entity_identifier_name' => '_id',
+                'table_service' => 'dashboard\\V1\\Rest\\TbGallery\\TbGalleryResource\\Table',
+            ],
+            'dashboard\\V1\\Rest\\TbAlbum\\TbAlbumResource' => [
+                'adapter_name' => 'mysqladapter',
+                'table_name' => 'tb_album',
+                'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+                'controller_service_name' => 'dashboard\\V1\\Rest\\TbAlbum\\Controller',
+                'entity_identifier_name' => '_id',
+                'table_service' => 'dashboard\\V1\\Rest\\TbAlbum\\TbAlbumResource\\Table',
+            ],
+            'dashboard\\V1\\Rest\\TbAlbumGallery\\TbAlbumGalleryResource' => [
+                'adapter_name' => 'mysqladapter',
+                'table_name' => 'tb_album_gallery',
+                'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+                'controller_service_name' => 'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller',
+                'entity_identifier_name' => '_id',
+                'table_service' => 'dashboard\\V1\\Rest\\TbAlbumGallery\\TbAlbumGalleryResource\\Table',
+            ],
         ],
     ],
     'zf-content-validation' => [
@@ -830,6 +1016,15 @@ return [
         ],
         'dashboard\\V1\\Rest\\TbFiles\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rest\\TbFiles\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbGallery\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbGallery\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbAlbum\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbAlbum\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbAlbumGallery\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -1792,6 +1987,239 @@ return [
                 'filters' => [],
                 'name' => 'status',
                 'field_type' => 'String',
+            ],
+        ],
+        'dashboard\\V1\\Rest\\TbGallery\\Validator' => [
+            0 => [
+                'name' => 'data_src',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => 'ZF\\ContentValidation\\Validator\\DbNoRecordExists',
+                        'options' => [
+                            'adapter' => 'mysqladapter',
+                            'table' => 'tb_gallery',
+                            'field' => 'data_src',
+                        ],
+                    ],
+                    1 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '225',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'album_code',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '50',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'dashboard\\V1\\Rest\\TbGalleryAlbum\\Validator' => [
+            0 => [
+                'name' => 'album_code',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '50',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'album_title',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'dashboard\\V1\\Rest\\TbGalleryalbum\\Validator' => [
+            0 => [
+                'name' => 'album_code',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '50',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'album_title',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'dashboard\\V1\\Rest\\TbAlbum\\Validator' => [
+            0 => [
+                'name' => 'album_code',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '50',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'album_title',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '100',
+                        ],
+                    ],
+                ],
+            ],
+            2 => [
+                'name' => 'data_src',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '225',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'dashboard\\V1\\Rest\\TbAlbumGallery\\Validator' => [
+            0 => [
+                'name' => 'album_id',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
+            ],
+            1 => [
+                'name' => 'gallery_id',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
             ],
         ],
     ],
