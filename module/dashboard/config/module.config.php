@@ -961,7 +961,7 @@ return [
                 'table_service' => 'dashboard\\V1\\Rest\\TbInspect\\TbInspectResource\\Table',
             ],
             'dashboard\\V1\\Rest\\TbGallery\\TbGalleryResource' => [
-                'adapter_name' => 'mysqladapter',
+                'adapter_name' => 'mysqlpdo',
                 'table_name' => 'tb_gallery',
                 'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
                 'controller_service_name' => 'dashboard\\V1\\Rest\\TbGallery\\Controller',
@@ -969,7 +969,7 @@ return [
                 'table_service' => 'dashboard\\V1\\Rest\\TbGallery\\TbGalleryResource\\Table',
             ],
             'dashboard\\V1\\Rest\\TbAlbum\\TbAlbumResource' => [
-                'adapter_name' => 'mysqladapter',
+                'adapter_name' => 'mysqlpdo',
                 'table_name' => 'tb_album',
                 'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
                 'controller_service_name' => 'dashboard\\V1\\Rest\\TbAlbum\\Controller',
@@ -977,7 +977,7 @@ return [
                 'table_service' => 'dashboard\\V1\\Rest\\TbAlbum\\TbAlbumResource\\Table',
             ],
             'dashboard\\V1\\Rest\\TbAlbumGallery\\TbAlbumGalleryResource' => [
-                'adapter_name' => 'mysqladapter',
+                'adapter_name' => 'mysqlpdo',
                 'table_name' => 'tb_album_gallery',
                 'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
                 'controller_service_name' => 'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller',
@@ -2005,7 +2005,7 @@ return [
                     0 => [
                         'name' => 'ZF\\ContentValidation\\Validator\\DbNoRecordExists',
                         'options' => [
-                            'adapter' => 'mysqladapter',
+                            'adapter' => 'mysqlpdo',
                             'table' => 'tb_gallery',
                             'field' => 'data_src',
                         ],
