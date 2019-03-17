@@ -230,6 +230,15 @@ return [
                     ],
                 ],
             ],
+            'dashboard.rest.tb-event' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/events[/:tb_event_id]',
+                    'defaults' => [
+                        'controller' => 'dashboard\\V1\\Rest\\TbEvent\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -259,6 +268,7 @@ return [
             23 => 'dashboard.rest.tb-gallery',
             24 => 'dashboard.rest.tb-album',
             25 => 'dashboard.rest.tb-album-gallery',
+            26 => 'dashboard.rest.tb-event',
         ],
     ],
     'zf-rest' => [
@@ -528,6 +538,28 @@ return [
             'collection_class' => \dashboard\V1\Rest\TbAlbumGallery\TbAlbumGalleryCollection::class,
             'service_name' => 'tb_album_gallery',
         ],
+        'dashboard\\V1\\Rest\\TbEvent\\Controller' => [
+            'listener' => \dashboard\V1\Rest\TbEvent\TbEventResource::class,
+            'route_name' => 'dashboard.rest.tb-event',
+            'route_identifier_name' => 'tb_event_id',
+            'collection_name' => 'tb_event',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \dashboard\V1\Rest\TbEvent\TbEventEntity::class,
+            'collection_class' => \dashboard\V1\Rest\TbEvent\TbEventCollection::class,
+            'service_name' => 'tb_event',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
@@ -555,6 +587,7 @@ return [
             'dashboard\\V1\\Rest\\TbGallery\\Controller' => 'HalJson',
             'dashboard\\V1\\Rest\\TbAlbum\\Controller' => 'HalJson',
             'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller' => 'HalJson',
+            'dashboard\\V1\\Rest\\TbEvent\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -677,6 +710,11 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'dashboard\\V1\\Rest\\TbEvent\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'dashboard\\V1\\Rest\\Movies\\Controller' => [
@@ -773,6 +811,10 @@ return [
                 1 => 'application/json',
             ],
             'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller' => [
+                0 => 'application/vnd.dashboard.v1+json',
+                1 => 'application/json',
+            ],
+            'dashboard\\V1\\Rest\\TbEvent\\Controller' => [
                 0 => 'application/vnd.dashboard.v1+json',
                 1 => 'application/json',
             ],
@@ -924,6 +966,18 @@ return [
                 'route_identifier_name' => 'tb_album_gallery_id',
                 'is_collection' => true,
             ],
+            \dashboard\V1\Rest\TbEvent\TbEventEntity::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-event',
+                'route_identifier_name' => 'tb_event_id',
+                'hydrator' => \Zend\Hydrator\ArraySerializable::class,
+            ],
+            \dashboard\V1\Rest\TbEvent\TbEventCollection::class => [
+                'entity_identifier_name' => '_id',
+                'route_name' => 'dashboard.rest.tb-event',
+                'route_identifier_name' => 'tb_event_id',
+                'is_collection' => true,
+            ],
         ],
     ],
     'zf-apigility' => [
@@ -984,6 +1038,14 @@ return [
                 'entity_identifier_name' => '_id',
                 'table_service' => 'dashboard\\V1\\Rest\\TbAlbumGallery\\TbAlbumGalleryResource\\Table',
             ],
+            \dashboard\V1\Rest\TbEvent\TbEventResource::class => [
+                'adapter_name' => 'mysqlpdo',
+                'table_name' => 'tb_event',
+                'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
+                'controller_service_name' => 'dashboard\\V1\\Rest\\TbEvent\\Controller',
+                'entity_identifier_name' => '_id',
+                'table_service' => 'dashboard\\V1\\Rest\\TbEvent\\TbEventResource\\Table',
+            ],
         ],
     ],
     'zf-content-validation' => [
@@ -1025,6 +1087,9 @@ return [
         ],
         'dashboard\\V1\\Rest\\TbAlbumGallery\\Controller' => [
             'input_filter' => 'dashboard\\V1\\Rest\\TbAlbumGallery\\Validator',
+        ],
+        'dashboard\\V1\\Rest\\TbEvent\\Controller' => [
+            'input_filter' => 'dashboard\\V1\\Rest\\TbEvent\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -2222,6 +2287,99 @@ return [
                 'validators' => [],
             ],
         ],
+        'dashboard\\V1\\Rest\\TbEvent\\Validator' => [
+            0 => [
+                'name' => 'event_title',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => 'ZF\\ContentValidation\\Validator\\DbNoRecordExists',
+                        'options' => [
+                            'adapter' => 'mysqlpdo',
+                            'table' => 'tb_event',
+                            'field' => 'event_title',
+                        ],
+                    ],
+                    1 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '200',
+                        ],
+                    ],
+                ],
+            ],
+            1 => [
+                'name' => 'event_desc',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '65535',
+                        ],
+                    ],
+                ],
+            ],
+            2 => [
+                'name' => 'event_date',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\Digits::class,
+                    ],
+                ],
+                'validators' => [],
+            ],
+            3 => [
+                'name' => 'event_img',
+                'required' => true,
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                            'max' => '255',
+                        ],
+                    ],
+                ],
+            ],
+            4 => [
+                'required' => false,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'status',
+                'field_type' => 'String',
+            ],
+        ],
     ],
     'zf-mvc-auth' => [
         'authorization' => [
@@ -2376,6 +2534,8 @@ return [
     ],
     'service_manager' => [
         'factories' => [
+            \dashboard\V1\Rest\TbEvent\TbEventResource::class => \dashboard\V1\Rest\TbEvent\TbEventResourceFactory::class,
+            \dashboard\V1\Rest\TbEvent\TbEventTableGateway::class => \dashboard\V1\Rest\TbEvent\TbEventTableGatewayFactory::class,
             \dashboard\V1\Rest\TbFiles\TbFilesResource::class => \dashboard\V1\Rest\TbFiles\TbFilesResourceFactory::class,
             \dashboard\V1\Rest\TbFiles\TbFilesTableGateway::class => \dashboard\V1\Rest\TbFiles\TbFilesTableGatewayFactory::class,
             \dashboard\V1\Rest\TbUsers\TbUsersResource::class => \dashboard\V1\Rest\TbUsers\TbUsersResourceFactory::class,
