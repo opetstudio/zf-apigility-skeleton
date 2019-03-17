@@ -2530,6 +2530,22 @@ return [
                     ],
                 ],
             ],
+            'dashboard\\V1\\Rest\\TbEvent\\Controller' => [
+                'collection' => [
+                    'GET' => false,
+                    'POST' => true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
+                ],
+                'entity' => [
+                    'GET' => false,
+                    'POST' => false,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ],
+            ],
         ],
     ],
     'service_manager' => [
