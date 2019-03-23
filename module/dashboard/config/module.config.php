@@ -488,7 +488,7 @@ return [
                 1 => 'POST',
             ],
             'collection_query_whitelist' => [],
-            'page_size' => '200',
+            'page_size' => '1000',
             'page_size_param' => null,
             'entity_class' => \dashboard\V1\Rest\TbGallery\TbGalleryEntity::class,
             'collection_class' => \dashboard\V1\Rest\TbGallery\TbGalleryCollection::class,
