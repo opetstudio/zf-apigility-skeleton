@@ -2379,6 +2379,22 @@ return [
                 'name' => 'status',
                 'field_type' => 'String',
             ],
+            5 => [
+                'required' => false,
+                'validators' => [],
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\StringTrim::class,
+                        'options' => [],
+                    ],
+                    1 => [
+                        'name' => \Zend\Filter\StripTags::class,
+                        'options' => [],
+                    ],
+                ],
+                'name' => 'event_address',
+                'field_type' => 'String',
+            ],
         ],
     ],
     'zf-mvc-auth' => [
