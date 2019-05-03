@@ -2382,16 +2382,7 @@ return [
             5 => [
                 'required' => false,
                 'validators' => [],
-                'filters' => [
-                    0 => [
-                        'name' => \Zend\Filter\StringTrim::class,
-                        'options' => [],
-                    ],
-                    1 => [
-                        'name' => \Zend\Filter\StripTags::class,
-                        'options' => [],
-                    ],
-                ],
+                'filters' => [],
                 'name' => 'event_address',
                 'field_type' => 'String',
             ],
