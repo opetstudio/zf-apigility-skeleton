@@ -257,4 +257,4 @@ php -S 0.0.0.0:8080 -ddisplay_errors=0 -t public public/index.php
 
 ### start mysql
 
-mysql.server start
+brew services start mysql@5.7
